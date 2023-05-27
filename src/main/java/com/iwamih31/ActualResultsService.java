@@ -253,7 +253,9 @@ public class ActualResultsService {
 		String message = null;
 		int[] column_Width = Set.get_Value_Set(LabelSet.actualResults_Set);
 		String[][] output_Data = to_Array(actualResults_Sheet(user_id, year_month));
-		message = excel.output_Excel_Sheet("実績記入表（個人）", column_Width, output_Data, response);
+		User user = user(user_id);
+		WorkSheet workSheet = new ActualResultsWorkSheet(user.getName(), column_Width);
+		message = excel.output_Excel_Sheet("実績記入表（個人）", workSheet, output_Data, response);
 		__consoleOut__("user_Output_Excel(int user_id, String year_month, HttpServletResponse response) 終了");
 		return message;
 	}
@@ -263,9 +265,12 @@ public class ActualResultsService {
 		__consoleOut__("plan_Output_Excel(int user_id, String year_month, HttpServletResponse response) 開始");
 		Excel excel = new Excel();
 		String message = null;
-		int[] column_Width = Set.get_Value_Set(LabelSet.actualResults_Set);
+		int[] column_Width = Set.get_Value_Set(LabelSet.plan_Set);
 		String[][] output_Data = to_Array(plan_To_Visit_Sheet(user_id, year_month));
-		message = excel.output_Excel_Sheet("訪問予定計画表（個人）", column_Width, output_Data, response);
+		String sheet_Name = user(user_id).getName();
+		if(sheet_Name == null || sheet_Name == "") sheet_Name = "訪問予定計画表（個人）";
+		WorkSheet workSheet = new PlanWorkSheet(sheet_Name, column_Width);
+		message = excel.output_Excel_Sheet("訪問予定計画表（個人）", workSheet, output_Data, response);
 		__consoleOut__("plan_Output_Excel(int user_id, String year_month, HttpServletResponse response) 終了");
 		return message;
 	}
@@ -282,7 +287,8 @@ public class ActualResultsService {
 			String[][] sheet = to_Array(actualResults_Sheet(user.getId(), year_month));
 			output_Data.add(sheet);
 		}
-		message = excel.output_Excel_Sheets("実績記入表", user_Names(), column_Width, output_Data, response);
+		WorkSheet workSheet = new ActualResultsWorkSheet("実績記入表", column_Width);
+		message = excel.output_Excel_Sheets("実績記入表", workSheet, user_Names(), output_Data, response);
 		__consoleOut__("office_Output_Excel(HttpServletResponse response) 終了");
 		return message;
 	}
@@ -304,7 +310,7 @@ public class ActualResultsService {
 
 	/** Excelシート（予定）作成用値データ */
 	public List<String[]> plan_To_Visit_Sheet(int user_id, String year_month) {
-		__consoleOut__("public List<String[]> actualResults_Sheet(int user_id, String year_month)開始");
+		__consoleOut__("public List<String[]> plan_To_Visit_Sheet(int user_id, String year_month)開始");
 		// 列追加用リスト作成
 		List<String[]> sheet_Array = new ArrayList<>();
 		// ヘッド部分追加
@@ -313,7 +319,7 @@ public class ActualResultsService {
 		sheet_Array.add(plan_Labels());
 		// データ行追加
 		sheet_Array.addAll(data_Row_Values_Plan_To_Visit(user_id, year_month));
-		__consoleOut__("public List<String[]> actualResults_Sheet(int user_id, String year_month)終了");
+		__consoleOut__("public List<String[]> plan_To_Visit_Sheet(int user_id, String year_month)終了");
 		return sheet_Array;
 	}
 
@@ -429,7 +435,7 @@ public class ActualResultsService {
 	}
 
 	private String[] actualResults_Row(LocalDate localDate, Plan plan) {
-  	String[] actualResults_Row = new String[] {
+  	String[] row = new String[] {
   			make_String(month_day_JP(localDate)),
 				make_String(day_of_week(localDate)),
 				make_String(plan_Subject(plan)),
@@ -439,18 +445,18 @@ public class ActualResultsService {
 				"",
 				""
 			};
-		return actualResults_Row;
+		return row;
 	}
 
 	private String[] plan_To_Visit_Row(Plan plan) {
-		String[] actualResults_Row = new String[] {
-				make_String(plan_Day_of_week(plan)),
+		String[] row = new String[] {
 				make_String(plan_Subject(plan)),
+				make_String(plan_Day_of_week(plan)),
 				make_String(plan_Start_time(plan)),
 				make_String(plan_Minutes(plan)),
 				make_String(plan_Items(plan)),
 				make_String(plan_Note(plan))};
-		return actualResults_Row;
+		return row;
 	}
 
 	private String plan_Day_of_week(Plan plan) {

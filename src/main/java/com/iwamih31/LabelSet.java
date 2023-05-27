@@ -40,8 +40,8 @@ public class LabelSet {
 		};
 
 	public static Set[] plan_Set = {
-			set("曜日",					9),
 			set("サービス",			5),
+			set("曜日",					9),
 			set("開始時刻",			5),
 			set("実施分数",			5),
 			set("サービス内訳",	16),

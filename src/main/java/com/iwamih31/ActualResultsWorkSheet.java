@@ -5,15 +5,13 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class WorkSheet {
+public class ActualResultsWorkSheet extends WorkSheet{
 
-	private String sheet_Name;
-	private int[] column_Width;
+	public String sheet_Name;
+	public int[] column_Width;
 
-	public WorkSheet() {
-	}
 
-	public WorkSheet(String sheet_Name, int[] column_Width) {
+	public ActualResultsWorkSheet(String sheet_Name, int[] column_Width) {
 		this.sheet_Name = sheet_Name;
 		this.column_Width = column_Width;
 	}
@@ -21,18 +19,15 @@ public class WorkSheet {
 
 	/** フォント定義用 Map リスト */
 	public List<Map<String, String>> fonts(){
-		// リスト作成
 		List<Map<String, String>> fonts = new ArrayList<>();
-		// マップ作成
 		Map<String, String> font0 = new HashMap<>();
 		Map<String, String> font1 = new HashMap<>();
 		// フォント0
-		font0.put("fontName", "游ゴシック");
+		font0.put("fontName", "ＭＳ Ｐゴシック");
 		font0.put("fontHeight", "200");
-		// フォント1
-		font1.put("fontName", "游ゴシック");
+		font1.put("fontName", "ＭＳ Ｐゴシック");
 		font1.put("fontHeight", "150");
-		// リストに追加
+		// フォント1
 		fonts.add(font0);
 		fonts.add(font1);
 		return fonts;
@@ -43,24 +38,29 @@ public class WorkSheet {
 		List<Map<String, String[]>> row_Format = new ArrayList<>();
 		for (int i = 0; i < row_Size; i++) {
 			// default の値
-			int height = 400;
+			int height = 700;
 			int font = 0;
 			String[] border;
 			String[] align;
 			switch (i + 1) {
 				case 1: // １行目の場合
+					height = 500;
 					border = row_1_Border;
 					align = row_1_Align_;
 					break;
 				case 2: // ２行目の場合
+					height = 500;
 					border = row_2_Border;
 					align = row_2_Align_;
 					break;
 				case 3: // ３行目の場合
+					height = 100;
 					border = row_3_Border;
 					align = row_3_Align_;
 					break;
 				case 4: // ４行目（ラベル行）の場合
+					height = 500;
+					font = 1;
 					border = label_Border;
 					align = label_Align_;
 					break;
@@ -82,20 +82,19 @@ public class WorkSheet {
 	// 位置（"｜","CS","DD","FL","JY","←","→"）
 	// １行目
 	String[] row_1_Border = {"  ","  ","  ","  ","  ","  ","  ","  "}; // 罫線
-	String[] row_1_Align_ = {"  ","  ","  ","  ","  ","  ","  ","  "}; // 位置
+	String[] row_1_Align_ = {"  ","  ","  ","  ","  ","→","  ","  "}; // 位置
 	// ２行目
-	String[] row_2_Border = {"  ","  ","  ","  ","  ","  ","  ","  "}; // 罫線
-	String[] row_2_Align_ = {"  ","  ","  ","  ","  ","  ","  ","  "}; // 位置
+	String[] row_2_Border = {"匚","二","二","コ","匚","二","二","コ"}; // 罫線
+	String[] row_2_Align_ = {"｜","←","  ","  ","  ","→","  ","  "}; // 位置
 	// ３行目
 	String[] row_3_Border = {"  ","  ","  ","  ","  ","  ","  ","  "}; // 罫線
 	String[] row_3_Align_ = {"  ","  ","  ","  ","  ","  ","  ","  "}; // 位置
 	// ４行目（ラベル行）
-	String[] label_Border = {"  ","  ","  ","  ","  ","  ","  ","  "}; // 罫線
-	String[] label_Align_ = {"  ","  ","  ","  ","  ","  ","  ","  "}; // 位置
+	String[] label_Border = {"□","□","□","□","□","□","□","□"}; // 罫線
+	String[] label_Align_ = {"｜","｜","DD","｜","｜","｜","DD","DD"}; // 位置
 	// その他（データ行）
-	String[] data__Border = {"  ","  ","  ","  ","  ","  ","  ","  "}; // 罫線
-	String[] data__Align_ = {"  ","  ","  ","  ","  ","  ","  ","  "}; // 位置
-
+	String[] data__Border = {"□","□","□","□","□","□","□","□"}; // 罫線
+	String[] data__Align_ = {"｜","｜","｜","｜","DD","｜","｜","｜"}; // 位置
 
 	private String[] array(String value) {
 		return new String[] {value};
@@ -103,21 +102,5 @@ public class WorkSheet {
 
 	private String[] array(int value) {
 		return new String[] {String.valueOf(value)};
-	}
-
-	public String getSheet_Name() {
-		return sheet_Name;
-	}
-
-	public void setSheet_Name(String sheet_Name) {
-		this.sheet_Name = sheet_Name;
-	}
-
-	public int[] getColumn_Width() {
-		return column_Width;
-	}
-
-	public void setColumn_Width(int[] column_Width) {
-		this.column_Width = column_Width;
 	}
 }

@@ -10,7 +10,6 @@ import java.net.URLEncoder;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -26,65 +25,11 @@ import org.apache.poi.ss.usermodel.HorizontalAlignment;
 import org.apache.poi.ss.usermodel.IndexedColors;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
-import org.apache.poi.ss.usermodel.VerticalAlignment;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.usermodel.WorkbookFactory;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 public class Excel {
-
-	public List<Map<String, String[]>> sheet_Format(int row_Size){
-		List<Map<String, String[]>> sheet_Format = new ArrayList<>();
-		for (int i = 0; i < row_Size; i++) {
-			String[] border;
-			String[] align;
-			switch (i + 1) {
-				case 1: // 1行目の場合
-					border = row_1_Border;
-					align = row_1_Align_;
-					break;
-				case 2: // 2行目の場合
-					border = row_2_Border;
-					align = row_2_Align_;
-					break;
-				case 3: // 3行目の場合
-					border = row_3_Border;
-					align = row_3_Align_;
-					break;
-				case 4: // 4行目（ラベル行）の場合
-					border = label_Border;
-					align = label_Align_;
-					break;
-				default: // その他（データ行）の場合
-					border = data__Border;
-					align = data__Align_;
-			}
-			sheet_Format.add(new HashMap<>());
-			Map<String, String[]> row_Format = sheet_Format.get(i);
-			row_Format.put("border", border);
-			row_Format.put("align", align);
-		}
-		return sheet_Format;
-	}
-
-
-	// 罫線作成の為の配列
-	// "□","￣","＿"," |","| ","二","冂","凵","匚","コ","ノ","乚","ｒ","¬"
-	//
-	String[] row_1_Border = {"  ","  ","  ","  ","  ","  ","  ","  "};
-	String[] row_1_Align_ = {"  ","  ","  ","  ","  ","→","  ","  "};
-
-	String[] row_2_Border = {"匚","二","二","コ","匚","二","二","コ"};
-	String[] row_2_Align_ = {"｜","←","  ","  ","  ","→","  ","  "};
-
-	String[] row_3_Border = {"  ","  ","  ","  ","  ","  ","  ","  "};
-	String[] row_3_Align_ = {"  ","  ","  ","  ","  ","  ","  ","  "};
-
-	String[] label_Border = {"□","□","□","□","□","□","□","□"};
-	String[] label_Align_ = {"｜","｜","DD","｜","｜","｜","DD","DD"};
-
-	String[] data__Border = {"□","□","□","□","□","□","□","□"};
-	String[] data__Align_ = {"｜","｜","｜","｜","DD","｜","｜","｜"};
 
 	public CellStyle alignment_Apply(CellStyle cellStyle, String alignment_Pattern) {
 		switch(alignment_Pattern) {
@@ -219,15 +164,14 @@ public class Excel {
 	}
 
 	/** 1シート分のデータを 1つのExcelファイル として出力 */
-	public String output_Excel_Sheet(String name_Head, int[] column_Width, String[][] output_Data, HttpServletResponse response) {
-		___console_Out___("output_Excel() 開始");
+	public String output_Excel_Sheet(String name_Head, WorkSheet workSheet, String[][] output_Data, HttpServletResponse response) {
+		___console_Out___("output_Excel_Sheet() 開始");
 		String file_Name = with_Now(name_Head) + ".xlsx";
-		String sheet_Name = with_Now(name_Head);
 		String message = file_Name + " のダウンロード";
 		try (
 				Workbook workbook = new XSSFWorkbook();
 				OutputStream outputStream = response.getOutputStream()){
-			sheet_Making(workbook, sheet_Name, column_Width, output_Data, response);
+			sheet_Making(workbook, workSheet, output_Data, response);
 			// ファイル名を指定して保存
 			if (response_Making(response, file_Name)) {
 				workbook.write(outputStream);
@@ -244,7 +188,7 @@ public class Excel {
 	}
 
 	/** 複数シート分のデータを 1つのExcelファイル として出力 */
-	public String output_Excel_Sheets(String name_Head, String[] sheet_Names, int[] column_Width, List<String[][]> output_Data_List, HttpServletResponse response) {
+	public String output_Excel_Sheets(String name_Head, WorkSheet workSheet, String[] sheet_Names, List<String[][]> output_Data_List, HttpServletResponse response) {
 		___console_Out___("output_Excel() 開始");
 		String file_Name = with_Now(name_Head) + ".xlsx";
 		String message = file_Name + " のダウンロード";
@@ -253,8 +197,9 @@ public class Excel {
 	      OutputStream outputStream = response.getOutputStream()){
 			// sheet_Names の要素数回ループ
 			for (int i = 0; i < sheet_Names.length; i++) {
-				// ワークシート作成
-				sheet_Making(workbook, sheet_Names[i], column_Width, output_Data_List.get(i), response);
+				// ワークシート名変更
+				workSheet.setSheet_Name(sheet_Names[i]);
+				sheet_Making(workbook, workSheet, output_Data_List.get(i), response);
 			}
 	    // ファイル名を指定して保存
 			if (response_Making(response, file_Name)) {
@@ -273,44 +218,39 @@ public class Excel {
 
 
 	/** Sheetを 作成 */
-	public Sheet sheet_Making(Workbook workbook, String sheet_Name, int[] column_Width, String[][] value_Data, HttpServletResponse response) {
+	public Sheet sheet_Making(Workbook workbook, WorkSheet work_Sheet, String[][] value_Data, HttpServletResponse response) {
 		___console_Out___("sheet_Making() 開始");
+		// シートを作成
+		String sheet_Name = work_Sheet.getSheet_Name();
+		___console_Out___("sheet_Name = " + sheet_Name);
 		Sheet sheet = workbook.createSheet(sheet_Name);
-		// 使用するフォントを定義
-		Font font1 = workbook.createFont();
-		font1.setFontName("ＭＳ Ｐゴシック");
-		font1.setFontHeight((short) 200);
-		Font font2 = workbook.createFont();
-		font2.setFontName("ＭＳ Ｐゴシック");
-		font2.setFontHeight((short) 150);
-		Font use_Font = font1;
+		// 書式定義用データ
 		int row_Size = value_Data.length;
+		List<Map<String, String[]>> row_Format = work_Sheet.row_Format(row_Size);
+		// 使用するフォントを定義
+		// フォント定義用データ
+		List<Map<String, String>> work_Sheet_Fonts = work_Sheet.fonts();
+		// フォント格納用リスト作成
+		List<Font>fonts = new ArrayList<>();
+		for (Map<String, String> map : work_Sheet_Fonts) {
+			// 新しいフォント作成
+			Font font = workbook.createFont();
+			font.setFontName(map.get("fontName"));
+			font.setFontHeight((short) Integer.parseInt(map.get("fontHeight")));
+			fonts.add(font);
+		}
 		// 行ループ
 		for (int i = 0; i < row_Size; i++) {
 			// 行を定義
 			Row row = sheet.createRow(i);
-			// 行の高さとフォントのサイズを指定
-			int height = 700;
-			switch (i + 1) {
-				case 1:
-				case 2:
-					height = 500;
-					break;
-				case 3:
-					height = 100;
-					break;
-				case 4:
-					height = 500;
-					use_Font = font2;
-					break;
-				default:
-			}
-			// 行の高さセット
+			// 行フォーマット
+			Map<String, String[]> row_Map = row_Format.get(i);
+			// 行の高さを指定
+			int height = Integer.parseInt(row_Map.get("height")[0]);
 			row.setHeight((short) height);
 			// 列ループ
 			int column_Size = value_Data[i].length; //列数
 			for (int j = 0; j < column_Size; j++) {
-
 				// セルを定義
 				Cell cell = row.createCell(j);
 				String value = value_Data[i][j];
@@ -323,16 +263,17 @@ public class Excel {
 				// セルスタイルを定義
 				CellStyle cellStyle = workbook.createCellStyle();
 				// フォントをセット
-				cellStyle.setFont(use_Font);
+				int font_Num = Integer.parseInt(row_Map.get("font")[0]);
+				cellStyle.setFont(fonts.get(font_Num));
 				// 中央揃え
-				cellStyle.setVerticalAlignment(VerticalAlignment.CENTER);
-				alignment_Apply(cellStyle, sheet_Format(row_Size).get(i).get("align")[j]);
+				alignment_Apply(cellStyle, row_Map.get("align")[j]);
 				// 罫線指定
-				border_Apply(cellStyle, sheet_Format(row_Size).get(i).get("border")[j]);
+				border_Apply(cellStyle,  row_Map.get("border")[j]);
 				// セルにセルスタイルを適用
 				cell.setCellStyle(cellStyle);
 				// 最後の行のみ
 				if (i == row_Size - 1) {
+					int[] column_Width = work_Sheet.getColumn_Width();
 					if (column_Width != null) {
 						// 列幅設定（1文字分の横幅 × 文字数 ＋ 微調整分の幅）
 						sheet.setColumnWidth(j, 512 * column_Width[j] + 0);
