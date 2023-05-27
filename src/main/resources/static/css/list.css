@@ -1,0 +1,28 @@
+@charset "UTF-8";
+
+body {
+	position: relative;
+}
+
+#main {
+	margin: auto;
+	width: 80%;
+}
+
+table {
+	border-collapse: collapse;
+	border: solid;
+	margin: auto;
+}
+
+.th-width {
+	border: solid;
+	width: 10%;
+	text-align: center;
+}
+
+td {
+	border-left: solid;
+	border-right: solid;
+	padding-left: 1em;
+}

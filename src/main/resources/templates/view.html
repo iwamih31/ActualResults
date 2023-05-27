@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+	<meta charset="UTF-8">
+
+	<!-- ページタイトルの反映場所 -->
+	<title th:text="${title ?: _}">CareRecord</title>
+
+	<!-- 共通の CSS 読込	-->
+	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css">
+	<link rel="stylesheet" th:href="@{/css/common.css}">
+
+	<!-- 個別の JavaScript／CSS をインポート -->
+	<th:block th:replace="__${library}__?:_"></th:block>
+</head>
+<body>
+
+	<!-- ヘッダー -->
+	<div id="header">
+		<div class="flex_space_between">
+			<a th:href="@{${req} + '/UserList'}">
+				<img src="/image/logo.png" title="ロゴ" class="padding_s">
+			</a>
+			<nav class="padding_s">
+				<a th:href="@{${req} + '/UserList'}">
+					<button type="button" class="btn btn-primary">利用者一覧</button>
+				</a>
+				<a th:href="@{${req} + '/RoutineList'}">
+					<button type="button" class="btn btn-primary">定期入力</button>
+				</a>
+				<a th:href="@{${req} + '/Report'}">
+					<button type="button" class="btn btn-primary">帳票印刷</button>
+				</a>
+				<a th:href="@{${req} + '/Office'}">
+					<button type="button" class="btn btn-primary">事業所情報</button>
+				</a>
+				<a th:href="@{${req} + '/Setting'}">
+					<button type="button" class="btn btn-primary">設定</button>
+				</a>
+			</nav>
+		</div>
+	<hr>
+	</div>
+
+	<!-- メインコンテンツの埋め込み場所 -->
+	<div id="main" th:include="__${main}__">
+	</div>
+
+	<!-- フッター -->
+	<div id="footer">
+		<hr>
+		<a th:href="@{${req} + '/UserList'}">
+			<img src="/image/logo.png" title="ロゴ"  class="padding_s">
+		</a>
+	</div>
+</body>
+</html>

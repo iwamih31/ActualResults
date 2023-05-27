@@ -1,0 +1,18 @@
+@charset "UTF-8";
+
+body {
+	position: relative;
+	text-align: center;
+}
+
+#header {
+	text-align: left;
+}
+
+table {
+	margin: auto;
+}
+
+a {
+	font-size: 1.5em;
+}
