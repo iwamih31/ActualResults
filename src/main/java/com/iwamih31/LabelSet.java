@@ -81,6 +81,17 @@ public class LabelSet {
 			set("備考",		 9)
 		};
 
+	public static Set[] user_Set = {
+			set("ID",			 	3),
+			set("部屋番号",	4),
+			set("名前",	 		8),
+			set("誕生日",	 	6),
+			set("介護度",		5),
+			set("入居日",		6),
+			set("利用状況",	5),
+			set("備考",		  15)
+	};
+
 
 	public static Set set(String label_Name, int width) {
 		return new Set(label_Name, width);

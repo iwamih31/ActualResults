@@ -13,16 +13,7 @@
 		</div>
 		<!--	一覧表示	-->
 		<div>
-			<div class="center">
-				<div class="center">
-					<a th:href="@{${req} + '/EventList'}">
-						<button type="button" class="btn btn-primary button-detail">
-							行事予定
-						</button>
-					</a>
-				</div>
-			</div>
-			<table class="detail font-size-x-large">
+			<table class="detail font-size-x-large	center">
 				<th:block th:each="data : ${office_data}" th:object="${data}">
 					<tr>
 						<td>

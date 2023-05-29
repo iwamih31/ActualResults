@@ -102,6 +102,24 @@ public class ActualResultsController {
 	}
 
 
+	@PostMapping("/OfficeReport")
+	public String officeReport() {
+		service.__consoleOut__("@PostMapping(\"/OfficeReport\")開始");
+		service.__consoleOut__("@PostMapping(\"/OfficeReport\")終了");
+		return "redirect:/CareRecord/RoutineReport";
+	}
+
+	@GetMapping("/OfficeReport")
+	public String officeReport(
+			Model model) {
+		service.__consoleOut__("@GetMapping(\"/OfficeReport\")開始");
+		add_View_Data_(model, "officeReport", "事業所情報印刷");
+		model.addAttribute("label_Set", LabelSet.officeReport_Set);
+		model.addAttribute("office_Report", service.office_Report());
+		service.__consoleOut__("@GetMapping(\"/OfficeReport\")終了");
+		return "view";
+	}
+
 	@PostMapping("/Office/Output/Excel")
 	public String office_Output_Excel(
 			HttpServletResponse httpServletResponse,
@@ -113,16 +131,27 @@ public class ActualResultsController {
 		return "redirect:/CareRecord/OfficeReport";
 	}
 
+	@PostMapping("/UserList/Output/Excel")
+	public String userList_Output_Excel(
+			HttpServletResponse httpServletResponse,
+			RedirectAttributes redirectAttributes) {
+		service.__consoleOut__("@PostMapping(\"/UserList/Output/Excel\")開始");
+		String message = service.userList_Output_Excel(httpServletResponse);
+		redirectAttributes.addFlashAttribute("message", message);
+		service.__consoleOut__("@PostMapping(\"/UserList/Output/Excel\")終了");
+		return "redirect:/CareRecord/OfficeReport";
+	}
+
 	@PostMapping("/User/Output/Excel")
 	public String user_Output_Excel(
 			@Param("user_id")int user_id,
 			@Param("year_month")String year_month,
 			HttpServletResponse httpServletResponse,
 			RedirectAttributes redirectAttributes) {
-		service.__consoleOut__("@PostMapping(\"/Office/Output/Excel\")開始");
+		service.__consoleOut__("@PostMapping(\"/User/Output/Excel\")開始");
 		String message = service.user_Output_Excel(user_id, year_month, httpServletResponse);
 		redirectAttributes.addFlashAttribute("message", message);
-		service.__consoleOut__("@PostMapping(\"/Office/Output/Excel\")終了");
+		service.__consoleOut__("@PostMapping(\"/User/Output/Excel\")終了");
 		return "redirect:/CareRecord/OfficeReport";
 	}
 
@@ -132,10 +161,10 @@ public class ActualResultsController {
 			@Param("year_month")String year_month,
 			HttpServletResponse httpServletResponse,
 			RedirectAttributes redirectAttributes) {
-		service.__consoleOut__("@PostMapping(\"/Office/Output/Excel\")開始");
+		service.__consoleOut__("@PostMapping(\"/Plan/Output/Excel\")開始");
 		String message = service.plan_Output_Excel(user_id, year_month, httpServletResponse);
 		redirectAttributes.addFlashAttribute("message", message);
-		service.__consoleOut__("@PostMapping(\"/Office/Output/Excel\")終了");
+		service.__consoleOut__("@PostMapping(\"/Plan/Output/Excel\")終了");
 		return "redirect:/CareRecord/OfficeReport";
 	}
 
@@ -146,6 +175,7 @@ public class ActualResultsController {
 		add_View_Data_(model, "userList", "利用者一覧");
 		model.addAttribute("year_month", service.this_Year_Month());
 		model.addAttribute("userList", service.user_List());
+		model.addAttribute("label_Set_List", LabelSet.user_Set);
 		service.__consoleOut__("@GetMapping(\"/UserList\")終了");
 		return "view";
 	}
@@ -156,6 +186,7 @@ public class ActualResultsController {
 		service.__consoleOut__("@GetMapping(\"/UserSetting\")開始");
 		add_View_Data_(model, "userSetting", "利用者設定");
 		model.addAttribute("userList", service.user_All());
+		model.addAttribute("label_Set_List", LabelSet.user_Set);
 		service.__consoleOut__("@GetMapping(\"/UserSetting\")終了");
 		return "view";
 	}
@@ -194,6 +225,7 @@ public class ActualResultsController {
 		model.addAttribute("user", service.new_User());
 		model.addAttribute("id", service.next_User_Id());
 		model.addAttribute("blankRooms", service.blankRooms());
+		model.addAttribute("label_Set_List", LabelSet.user_Set);
 		model.addAttribute("options", service.options());
 		service.__consoleOut__("@GetMapping(\"/UserInsert\")終了");
 		return "view";
@@ -229,6 +261,7 @@ public class ActualResultsController {
 		model.addAttribute("id", id);
 		model.addAttribute("user", service.user(id));
 		model.addAttribute("blankRooms", service.blankRooms());
+		model.addAttribute("label_Set_List", LabelSet.user_Set);
 		model.addAttribute("options", service.options());
 		service.__consoleOut__("@GetMapping(\"/UserUpdate\")終了");
 		return "view";

@@ -7,17 +7,36 @@ import java.util.Map;
 
 public class WorkSheet {
 
-	private String sheet_Name;
-	private int[] column_Width;
+	// 罫線（"□","￣","＿"," |","| ","二","冂","凵","匚","コ","ノ","乚","ｒ","¬"）
+	// 位置（"｜","CS","DD","FL","JY","←","→"）
+	// １行目
+	String[] row_1_Border = {"  ","  ","  ","  ","  ","  ","  ","  "}; // 罫線
+	String[] row_1_Align_ = {"  ","  ","  ","  ","  ","  ","  ","  "}; // 位置
+	// ２行目
+	String[] row_2_Border = {"  ","  ","  ","  ","  ","  ","  ","  "}; // 罫線
+	String[] row_2_Align_ = {"  ","  ","  ","  ","  ","  ","  ","  "}; // 位置
+	// ３行目
+	String[] row_3_Border = {"  ","  ","  ","  ","  ","  ","  ","  "}; // 罫線
+	String[] row_3_Align_ = {"  ","  ","  ","  ","  ","  ","  ","  "}; // 位置
+	// ４行目（ラベル行）
+	String[] label_Border = {"  ","  ","  ","  ","  ","  ","  ","  "}; // 罫線
+	String[] label_Align_ = {"  ","  ","  ","  ","  ","  ","  ","  "}; // 位置
+	// その他（データ行）
+	String[] data__Border = {"  ","  ","  ","  ","  ","  ","  ","  "}; // 罫線
+	String[] data__Align_ = {"  ","  ","  ","  ","  ","  ","  ","  "}; // 位置
 
-	public WorkSheet() {
-	}
+	protected String sheet_Name;
+	protected int[] column_Width;
+	protected String[][] value_Data;
+	protected boolean printSetup = false;
 
-	public WorkSheet(String sheet_Name, int[] column_Width) {
+	public WorkSheet() {}
+
+	public WorkSheet(String sheet_Name, int[] column_Width, String[][] value_Data) {
 		this.sheet_Name = sheet_Name;
 		this.column_Width = column_Width;
+		this.value_Data = value_Data;
 	}
-
 
 	/** フォント定義用 Map リスト */
 	public List<Map<String, String>> fonts(){
@@ -78,23 +97,6 @@ public class WorkSheet {
 		return row_Format;
 	}
 
-	// 罫線（"□","￣","＿"," |","| ","二","冂","凵","匚","コ","ノ","乚","ｒ","¬"）
-	// 位置（"｜","CS","DD","FL","JY","←","→"）
-	// １行目
-	String[] row_1_Border = {"  ","  ","  ","  ","  ","  ","  ","  "}; // 罫線
-	String[] row_1_Align_ = {"  ","  ","  ","  ","  ","  ","  ","  "}; // 位置
-	// ２行目
-	String[] row_2_Border = {"  ","  ","  ","  ","  ","  ","  ","  "}; // 罫線
-	String[] row_2_Align_ = {"  ","  ","  ","  ","  ","  ","  ","  "}; // 位置
-	// ３行目
-	String[] row_3_Border = {"  ","  ","  ","  ","  ","  ","  ","  "}; // 罫線
-	String[] row_3_Align_ = {"  ","  ","  ","  ","  ","  ","  ","  "}; // 位置
-	// ４行目（ラベル行）
-	String[] label_Border = {"  ","  ","  ","  ","  ","  ","  ","  "}; // 罫線
-	String[] label_Align_ = {"  ","  ","  ","  ","  ","  ","  ","  "}; // 位置
-	// その他（データ行）
-	String[] data__Border = {"  ","  ","  ","  ","  ","  ","  ","  "}; // 罫線
-	String[] data__Align_ = {"  ","  ","  ","  ","  ","  ","  ","  "}; // 位置
 
 
 	private String[] array(String value) {
@@ -120,4 +122,13 @@ public class WorkSheet {
 	public void setColumn_Width(int[] column_Width) {
 		this.column_Width = column_Width;
 	}
+
+	public String[][] getValue_Data() {
+		return value_Data;
+	}
+
+	public void setValue_Data(String[][] value_Data) {
+		this.value_Data = value_Data;
+	}
+
 }

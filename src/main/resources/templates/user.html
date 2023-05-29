@@ -26,23 +26,27 @@
 				</form>
 			</div>
 			<div class="flex margin_1em">
-				<div class="date">[[${year_month}]]</div>
-					<form id="year_month" method="post" th:action="@{${req} + '/User/YearMonth'}">
-						<input type="hidden" name="user_id" th:value="${user_id}" />
-						<input type="hidden" name="year_month" th:value="${year_month}" />
-						<input type="hidden" name="next_URL" th:value="${next_URL}" />
-						<button form="year_month" type="submit" class="btn btn-primary button-date">
-							日付変更
-						</button>
-					</form>
-					<form id="output" method="post" th:action="@{${req} + '/User/Output/Excel'}">
-						<input type="hidden" name="user_id" th:value="${user.id}" />
-						<input type="hidden" name="year_month" th:value="${year_month}" />
-						<button form="output" type="submit" class="btn btn-primary button-date">
-							Excelに出力
-						</button>
-					</form>
-				<div th:if="${message}" class="alert arert-success">[[${message}]]</div>
+				<div class="date">
+					[[${year_month}]]
+				</div>
+				<form id="year_month" method="post" th:action="@{${req} + '/User/YearMonth'}">
+					<input type="hidden" name="user_id" th:value="${user_id}" />
+					<input type="hidden" name="year_month" th:value="${year_month}" />
+					<input type="hidden" name="next_URL" th:value="${next_URL}" />
+					<button form="year_month" type="submit" class="btn btn-primary button-date">
+						日付変更
+					</button>
+				</form>
+				<form id="output" method="post" th:action="@{${req} + '/User/Output/Excel'}">
+					<input type="hidden" name="user_id" th:value="${user.id}" />
+					<input type="hidden" name="year_month" th:value="${year_month}" />
+					<button form="output" type="submit" class="btn btn-primary button-date">
+						Excelに出力
+					</button>
+				</form>
+				<div th:if="${message}" class="alert arert-success">
+					[[${message}]]
+				</div>
 			</div>
 			<table class="table table-striped table-bordered table-hover">
 				<thead class="thead-light">

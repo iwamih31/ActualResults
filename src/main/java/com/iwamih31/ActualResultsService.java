@@ -224,7 +224,7 @@ public class ActualResultsService {
 		}
 	}
 
-	/** 事業所データをExcelとして出力 */
+	/** 事業所データをExcelファイルとして出力 */
 	public String office_Output_Excel(HttpServletResponse response) {
 		__consoleOut__("office_Output_Excel(HttpServletResponse response) 開始");
 		Excel excel = new Excel();
@@ -246,21 +246,20 @@ public class ActualResultsService {
 		return message;
 	}
 
-	/** 実績記入表（個人）をExcelとして出力 */
-	public String user_Output_Excel(int user_id, String year_month, HttpServletResponse response) {
+	/** 利用者情報一覧をExcelファイルとして出力 */
+	public String userList_Output_Excel(HttpServletResponse response) {
 		__consoleOut__("user_Output_Excel(int user_id, String year_month, HttpServletResponse response) 開始");
 		Excel excel = new Excel();
 		String message = null;
-		int[] column_Width = Set.get_Value_Set(LabelSet.actualResults_Set);
-		String[][] output_Data = to_Array(actualResults_Sheet(user_id, year_month));
-		User user = user(user_id);
-		WorkSheet workSheet = new ActualResultsWorkSheet(user.getName(), column_Width);
-		message = excel.output_Excel_Sheet("実績記入表（個人）", workSheet, output_Data, response);
+		int[] column_Width = Set.get_Value_Set(LabelSet.user_Set);
+		String[][] output_Data = to_Array(userList_Sheet());
+		WorkSheet workSheet = new UserListWorkSheet("利用者情報一覧", column_Width, output_Data);
+		message = excel.output_Excel_Sheet("利用者情報一覧", workSheet, response);
 		__consoleOut__("user_Output_Excel(int user_id, String year_month, HttpServletResponse response) 終了");
 		return message;
 	}
 
-	/** 訪問予定計画表（個人）をExcelとして出力 */
+	/** 訪問予定計画表（個人）をExcelファイルとして出力 */
 	public String plan_Output_Excel(int user_id, String year_month, HttpServletResponse response) {
 		__consoleOut__("plan_Output_Excel(int user_id, String year_month, HttpServletResponse response) 開始");
 		Excel excel = new Excel();
@@ -269,28 +268,63 @@ public class ActualResultsService {
 		String[][] output_Data = to_Array(plan_To_Visit_Sheet(user_id, year_month));
 		String sheet_Name = user(user_id).getName();
 		if(sheet_Name == null || sheet_Name == "") sheet_Name = "訪問予定計画表（個人）";
-		WorkSheet workSheet = new PlanWorkSheet(sheet_Name, column_Width);
-		message = excel.output_Excel_Sheet("訪問予定計画表（個人）", workSheet, output_Data, response);
+		WorkSheet workSheet = new PlanWorkSheet(sheet_Name, column_Width, output_Data);
+		message = excel.output_Excel_Sheet("訪問予定計画表（個人）", workSheet, response);
 		__consoleOut__("plan_Output_Excel(int user_id, String year_month, HttpServletResponse response) 終了");
 		return message;
 	}
 
-	/** 実績記入表（全利用者分）をExcelとして出力 */
+	/** 実績記入表（個人）をExcelファイルとして出力 */
+	public String user_Output_Excel(int user_id, String year_month, HttpServletResponse response) {
+		__consoleOut__("user_Output_Excel(int user_id, String year_month, HttpServletResponse response) 開始");
+		Excel excel = new Excel();
+		String message = null;
+		int[] column_Width = Set.get_Value_Set(LabelSet.actualResults_Set);
+		String[][] output_Data = to_Array(actualResults_Sheet(user_id, year_month));
+		String sheet_Name = user(user_id).getName();
+		if(sheet_Name == null || sheet_Name == "") sheet_Name = "実績記入表（個人）";
+		WorkSheet workSheet = new ActualResultsWorkSheet(sheet_Name, column_Width, output_Data);
+		message = excel.output_Excel_Sheet("実績記入表（個人）", workSheet, response);
+		__consoleOut__("user_Output_Excel(int user_id, String year_month, HttpServletResponse response) 終了");
+		return message;
+	}
+
+	/** 実績記入表（全利用者分）をExcelファイルとして出力 */
 	public String actualResults_Output_Excel(String year_month, HttpServletResponse response) {
 		__consoleOut__("office_Output_Excel(HttpServletResponse response) 開始");
 		Excel excel = new Excel();
 		String message = null;
-		List<String[][]> output_Data = new ArrayList<>();
+		List<WorkSheet> workSheets = new ArrayList<>();
 		int[] column_Width = Set.get_Value_Set(LabelSet.actualResults_Set);
 		List<User> user_List = user_List();
 		for (User user : user_List) {
-			String[][] sheet = to_Array(actualResults_Sheet(user.getId(), year_month));
-			output_Data.add(sheet);
+			String[][] output_Data = to_Array(actualResults_Sheet(user.getId(), year_month));
+			WorkSheet workSheet = new ActualResultsWorkSheet(user.getName(), column_Width, output_Data);
+			workSheets.add(workSheet);
 		}
-		WorkSheet workSheet = new ActualResultsWorkSheet("実績記入表", column_Width);
-		message = excel.output_Excel_Sheets("実績記入表", workSheet, user_Names(), output_Data, response);
+		message = excel.output_Excel_Sheets("実績記入表", workSheets, response);
 		__consoleOut__("office_Output_Excel(HttpServletResponse response) 終了");
 		return message;
+	}
+
+	/** Excelシート（利用者情報一覧）作成用値データ */
+	public List<String[]> userList_Sheet() {
+		__consoleOut__("public List<String[]> actualResults_Sheet(int user_id, String year_month)開始");
+		// 列追加用リスト作成
+		List<String[]> sheet_Array = new ArrayList<>();
+		// ヘッド部分追加
+		sheet_Array.addAll(head_Row_Values(userList_head_Rows()));
+		// ラベル行追加
+		sheet_Array.add(userList_Labels());
+		// データ行追加
+		sheet_Array.addAll(data_Row_Values_userList());
+		__consoleOut__("public List<String[]> actualResults_Sheet(int user_id, String year_month)終了");
+		return sheet_Array;
+	}
+
+	private String[] head_Row_Values_userList() {
+		// TODO 自動生成されたメソッド・スタブ
+		return null;
 	}
 
 	/** Excelシート（実績）作成用値データ */
@@ -299,7 +333,7 @@ public class ActualResultsService {
 		// 列追加用リスト作成
 		List<String[]> sheet_Array = new ArrayList<>();
 		// ヘッド部分追加
-		sheet_Array.addAll(head_Row_Values(user_id, year_month));
+		sheet_Array.addAll(head_Row_Values(head_Rows(user_id, year_month)));
 		// ラベル行追加
 		sheet_Array.add(actualResults_Labels());
 		// データ行追加
@@ -314,7 +348,7 @@ public class ActualResultsService {
 		// 列追加用リスト作成
 		List<String[]> sheet_Array = new ArrayList<>();
 		// ヘッド部分追加
-		sheet_Array.addAll(head_Row_Values(user_id, year_month));
+		sheet_Array.addAll(head_Row_Values(head_Rows(user_id, year_month)));
 		// ラベル行追加
 		sheet_Array.add(plan_Labels());
 		// データ行追加
@@ -333,9 +367,8 @@ public class ActualResultsService {
 	}
 
 	/** ヘッド部分 */
-	private List<String[]> head_Row_Values(int user_id, String year_month) {
+	private List<String[]> head_Row_Values(String[][] head_Rows) {
 		List<String[]> head_Row_Values = new ArrayList<>();
-		String[][] head_Rows = head_Rows(user_id, year_month);
 		for (int i = 0; i < head_Rows.length; i++) {
 			// i が奇数（valueの配列）の時だけ処理を行う
 			if (i % 2 != 0) head_Row_Values.add(head_Rows[i]);
@@ -346,6 +379,11 @@ public class ActualResultsService {
 	/** 表部分 ラベル行 */
 	String[] actualResults_Labels() {
 		return Set.get_Name_Set(LabelSet.actualResults_Set);
+	}
+
+	/** 表部分 ラベル行 */
+	String[] userList_Labels() {
+		return Set.get_Name_Set(LabelSet.user_Set);
 	}
 
 	/** 表部分 データ行（実績） */
@@ -397,6 +435,27 @@ public class ActualResultsService {
 		return data_Row_Values;
 	}
 
+	/** 表部分 データ行（予定） */
+	List<String[]> data_Row_Values_userList() {
+		// データ格納用リスト作成
+		List<String[]> data_Row_Values = new ArrayList<>();
+		// ユーザ一覧を取得
+		List<User> user_List = user_All();
+		// 該当プランがあれば
+		if(user_List.size() > 0) {
+			// プラン数分ループ
+			for (User user : user_List) {
+				// プランに応じた行を作成
+				data_Row_Values.add(user_List_Row(user));
+			}
+			// プランが無ければ
+		} else {
+			// プラン無しの行を作成
+			data_Row_Values.add(user_List_Row(null));
+		}
+		return data_Row_Values;
+	}
+
 	private List<Plan> get_Plan_List(int user_id, LocalDate localDate, String day_of_week) {
 		return planRepository.get_Plan_List(user_id, localDate, day_of_week);
 	}
@@ -409,7 +468,7 @@ public class ActualResultsService {
   	String fase = "　氏名　";
   	String name = user.getRoom() +  "　" + user.getName() + "　様";
 		String form = "訪問介護サービス提供実施記録票";
-		String com_ = item_value("事業所名");
+		String com_ = office_item_value("事業所名");
 		// String[偶数][] = セルの罫線, String[奇数][] = セルの値
   	String[][] head_Rows = {
   			{"  ","  ","  ","  ","  ","  ","  ","  "},
@@ -424,14 +483,30 @@ public class ActualResultsService {
 		return head_Rows;
 	}
 
-	private String item_value(String item_name) {
-		String item_value;
-		if (item_name.isBlank() || item_name.isEmpty()) {
-			item_value = "ヘルパーステーション";
-		} else {
-			item_value = officeRepository.item_value(item_name).get(0);
-		}
-		return item_value;
+	private String[][] userList_head_Rows() {
+		__consoleOut__("private String[][] head_Rows(int user_id, String year_month)開始");
+		String form = "利用者情報一覧";
+		String com_ = office_item_value("事業所名");
+		String depa = office_item_value("部署名");
+		// String[偶数][] = セルの罫線, String[奇数][] = セルの値
+		String[][] head_Rows = {
+				{"  ","  ","  ","  ","  ","  ","  ","  "},
+				{""  ,""  ,""  ,""  ,form,""  ,""  ,""  },
+				{"匚","二","二","コ","匚","二","二","コ"},
+				{""  ,com_,""  ,""  ,""  ,depa,""  ,""  },
+				{"  ","  ","  ","  ","  ","  ","  ","  "},
+				{""  ,""  ,""  ,""  ,""  ,""  ,""  ,""  }
+		};
+		__consoleOut__("private String[][] head_Rows(int user_id, String year_month)終了");
+		__consoleOut__("String[][] head_Rows = " + head_Rows);
+		return head_Rows;
+	}
+
+	private String office_item_value(String item_name) {
+		String value = "";
+		List<String> item_value = officeRepository.item_value(item_name);
+		if (item_value.size() > 0) value = officeRepository.item_value(item_name).get(0);
+		return value;
 	}
 
 	private String[] actualResults_Row(LocalDate localDate, Plan plan) {
@@ -456,6 +531,19 @@ public class ActualResultsService {
 				make_String(plan_Minutes(plan)),
 				make_String(plan_Items(plan)),
 				make_String(plan_Note(plan))};
+		return row;
+	}
+
+	private String[] user_List_Row(User user) {
+		String[] row = new String[] {
+				make_String(user.getId()),
+				make_String(user.getRoom()),
+				make_String(user.getName()),
+				make_String(user.getBirthday()),
+				make_String(user.getLevel()),
+				make_String(user.getMove_in()),
+				make_String(user.getUse()),
+				make_String(user.getNote())};
 		return row;
 	}
 
@@ -922,7 +1010,7 @@ public class ActualResultsService {
 	}
 
 	public User new_User() {
-		return new User(next_User_Id(),0, "", null, "", null, "") ;
+		return new User(next_User_Id(),0, "", null, "", null, "", "") ;
 	}
 
 	public Office new_Office() {

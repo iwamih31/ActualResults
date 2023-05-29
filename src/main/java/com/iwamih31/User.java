@@ -56,4 +56,8 @@ public class User {
   // 利用状況
   @Column(name = "use", nullable = false)
   private String use;
+
+  // 備考
+  @Column(name = "note", nullable = false)
+  private String note;
 }

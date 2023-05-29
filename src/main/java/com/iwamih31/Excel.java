@@ -1,5 +1,9 @@
 package com.iwamih31;
 
+import java.awt.font.FontRenderContext;
+import java.awt.font.TextAttribute;
+import java.awt.font.TextLayout;
+import java.awt.geom.Rectangle2D;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -7,6 +11,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
+import java.text.AttributedString;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -23,46 +28,52 @@ import org.apache.poi.ss.usermodel.FillPatternType;
 import org.apache.poi.ss.usermodel.Font;
 import org.apache.poi.ss.usermodel.HorizontalAlignment;
 import org.apache.poi.ss.usermodel.IndexedColors;
+import org.apache.poi.ss.usermodel.PrintSetup;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.VerticalAlignment;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.usermodel.WorkbookFactory;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 public class Excel {
 
+	/** alignment_Pattern に応じてセルの alignment を設定 */
 	public CellStyle alignment_Apply(CellStyle cellStyle, String alignment_Pattern) {
-		switch(alignment_Pattern) {
-			case "｜":
-				cellStyle.setAlignment(HorizontalAlignment.CENTER);
-					break;
-			case "CS":
-				cellStyle.setAlignment(HorizontalAlignment.CENTER_SELECTION);
-					break;
-			case "DD":
-				cellStyle.setAlignment(HorizontalAlignment.DISTRIBUTED);
-					break;
-			case "FL":
-				cellStyle.setAlignment(HorizontalAlignment.FILL);
-					break;
-			case "JY":
-				cellStyle.setAlignment(HorizontalAlignment.JUSTIFY);
-					break;
-			case "←":
-				cellStyle.setAlignment(HorizontalAlignment.LEFT);
-					break;
-			case "→":
-				cellStyle.setAlignment(HorizontalAlignment.RIGHT);
-					break;
-			default:
-				cellStyle.setAlignment(HorizontalAlignment.GENERAL);
+		if(alignment_Pattern != null) {
+			switch(alignment_Pattern) {
+				case "｜":
+					cellStyle.setAlignment(HorizontalAlignment.CENTER);
+						break;
+				case "CS":
+					cellStyle.setAlignment(HorizontalAlignment.CENTER_SELECTION);
+						break;
+				case "DD":
+					cellStyle.setAlignment(HorizontalAlignment.DISTRIBUTED);
+						break;
+				case "FL":
+					cellStyle.setAlignment(HorizontalAlignment.FILL);
+						break;
+				case "JY":
+					cellStyle.setAlignment(HorizontalAlignment.JUSTIFY);
+						break;
+				case "←":
+					cellStyle.setAlignment(HorizontalAlignment.LEFT);
+						break;
+				case "→":
+					cellStyle.setAlignment(HorizontalAlignment.RIGHT);
+						break;
+				default:
+					cellStyle.setAlignment(HorizontalAlignment.GENERAL);
+			}
 		}
 		return cellStyle;
 	}
 
-
+	/** border_Pattern に応じてセルの 罫線 を設定 */
 	public CellStyle border_Apply(CellStyle cellStyle, String border_Pattern) {
-		switch(border_Pattern) {
+		if(border_Pattern != null) {
+			switch(border_Pattern) {
 			case "□":
 				cellStyle.setBorderTop(BorderStyle.THIN);
 				cellStyle.setBorderBottom(BorderStyle.THIN);
@@ -159,19 +170,32 @@ public class Excel {
 				cellStyle.setBorderLeft(BorderStyle.NONE);
 				cellStyle.setBorderRight(BorderStyle.NONE);
 				break;
+			}
 		}
 		return cellStyle;
 	}
 
+	// 色指定
+	private void bg_color_Apply(CellStyle cellStyle, String color_Index) {
+		if(color_Index != null) {
+			short bg_Index = (short) Integer.parseInt(color_Index);
+			// color_Index が AUTOMATIC のindexだったら何もしない
+			if(bg_Index != IndexedColors.AUTOMATIC.getIndex()) {
+				cellStyle.setFillForegroundColor((short) Integer.parseInt(color_Index));
+				cellStyle.setFillPattern(FillPatternType.SOLID_FOREGROUND);
+			}
+		}
+	}
+
 	/** 1シート分のデータを 1つのExcelファイル として出力 */
-	public String output_Excel_Sheet(String name_Head, WorkSheet workSheet, String[][] output_Data, HttpServletResponse response) {
+	public String output_Excel_Sheet(String name_Head, WorkSheet workSheet, HttpServletResponse response) {
 		___console_Out___("output_Excel_Sheet() 開始");
 		String file_Name = with_Now(name_Head) + ".xlsx";
 		String message = file_Name + " のダウンロード";
 		try (
 				Workbook workbook = new XSSFWorkbook();
 				OutputStream outputStream = response.getOutputStream()){
-			sheet_Making(workbook, workSheet, output_Data, response);
+			sheet_Making(workbook, workSheet);
 			// ファイル名を指定して保存
 			if (response_Making(response, file_Name)) {
 				workbook.write(outputStream);
@@ -188,18 +212,17 @@ public class Excel {
 	}
 
 	/** 複数シート分のデータを 1つのExcelファイル として出力 */
-	public String output_Excel_Sheets(String name_Head, WorkSheet workSheet, String[] sheet_Names, List<String[][]> output_Data_List, HttpServletResponse response) {
+	public String output_Excel_Sheets(String name_Head, List<WorkSheet> workSheets, HttpServletResponse response) {
 		___console_Out___("output_Excel() 開始");
 		String file_Name = with_Now(name_Head) + ".xlsx";
 		String message = file_Name + " のダウンロード";
 		try (
 				Workbook workbook = new XSSFWorkbook();
 	      OutputStream outputStream = response.getOutputStream()){
-			// sheet_Names の要素数回ループ
-			for (int i = 0; i < sheet_Names.length; i++) {
-				// ワークシート名変更
-				workSheet.setSheet_Name(sheet_Names[i]);
-				sheet_Making(workbook, workSheet, output_Data_List.get(i), response);
+			// workSheets の要素数回ループ
+			for (WorkSheet workSheet : workSheets) {
+				// workSheet を元に シートを作成
+				sheet_Making(workbook, workSheet);
 			}
 	    // ファイル名を指定して保存
 			if (response_Making(response, file_Name)) {
@@ -218,25 +241,33 @@ public class Excel {
 
 
 	/** Sheetを 作成 */
-	public Sheet sheet_Making(Workbook workbook, WorkSheet work_Sheet, String[][] value_Data, HttpServletResponse response) {
+	public Sheet sheet_Making(Workbook workbook, WorkSheet work_Sheet) {
 		___console_Out___("sheet_Making() 開始");
-		// シートを作成
+		/* シートを作成 */
+		// シート名取得
 		String sheet_Name = work_Sheet.getSheet_Name();
 		___console_Out___("sheet_Name = " + sheet_Name);
+		// シート名 sheet_Name のシートを作成
 		Sheet sheet = workbook.createSheet(sheet_Name);
-		// 書式定義用データ
+		String[][] value_Data = work_Sheet.getValue_Data();
+		// 行数取得
 		int row_Size = value_Data.length;
+		// 書式定義用データのリスト取得
 		List<Map<String, String[]>> row_Format = work_Sheet.row_Format(row_Size);
-		// 使用するフォントを定義
-		// フォント定義用データ
+		/* 使用するフォントを定義 */
+		// フォント定義用データリスト取得
 		List<Map<String, String>> work_Sheet_Fonts = work_Sheet.fonts();
 		// フォント格納用リスト作成
 		List<Font>fonts = new ArrayList<>();
-		for (Map<String, String> map : work_Sheet_Fonts) {
+		// フォント格納用リスト分ループ
+		for (Map<String, String> work_Sheet_Font : work_Sheet_Fonts) {
 			// 新しいフォント作成
 			Font font = workbook.createFont();
-			font.setFontName(map.get("fontName"));
-			font.setFontHeight((short) Integer.parseInt(map.get("fontHeight")));
+			// フォント名取得
+			font.setFontName(work_Sheet_Font.get("fontName"));
+			// フォントの高さ取得
+			font.setFontHeight((short) Integer.parseInt(work_Sheet_Font.get("fontHeight")));
+			// フォント格納用リストにフォントをセット
 			fonts.add(font);
 		}
 		// 行ループ
@@ -245,11 +276,13 @@ public class Excel {
 			Row row = sheet.createRow(i);
 			// 行フォーマット
 			Map<String, String[]> row_Map = row_Format.get(i);
-			// 行の高さを指定
+			// 行の高さを取得
 			int height = Integer.parseInt(row_Map.get("height")[0]);
+			// 取得した高さを行にセット
 			row.setHeight((short) height);
-			// 列ループ
-			int column_Size = value_Data[i].length; //列数
+			// 列数取得
+			int column_Size = value_Data[i].length;
+			// 列数分ループ
 			for (int j = 0; j < column_Size; j++) {
 				// セルを定義
 				Cell cell = row.createCell(j);
@@ -262,10 +295,19 @@ public class Excel {
 				}
 				// セルスタイルを定義
 				CellStyle cellStyle = workbook.createCellStyle();
-				// フォントをセット
+				// セルのフォントスタイルのリスト番号を取得
 				int font_Num = Integer.parseInt(row_Map.get("font")[0]);
-				cellStyle.setFont(fonts.get(font_Num));
-				// 中央揃え
+				// 取得した番号からセルのフォント決定
+				Font font = fonts.get(font_Num);
+				// 決定したフォントを cellStyle にセット
+				cellStyle.setFont(font);
+				// 背景色指定
+				if (row_Map.get("bg_color") != null) {
+					bg_color_Apply(cellStyle, row_Map.get("bg_color")[0]);
+				}
+				// 縦配置
+				cellStyle.setVerticalAlignment(VerticalAlignment.CENTER);
+				// 横配置
 				alignment_Apply(cellStyle, row_Map.get("align")[j]);
 				// 罫線指定
 				border_Apply(cellStyle,  row_Map.get("border")[j]);
@@ -290,6 +332,10 @@ public class Excel {
 		}
 //		sheet.setColumnBreak(7); // 改ページ位置設定
 //		sheet.removeColumnBreak(4);
+
+    PrintSetup printSetup = sheet.getPrintSetup();
+    printSetup.setLandscape(work_Sheet.printSetup);
+
 		for (int rowBreak : sheet.getRowBreaks()) {
 	    sheet.removeRowBreak(rowBreak);
 	}
@@ -798,6 +844,26 @@ public class Excel {
 		return head_String + now;
 	}
 
+	// Font が font の String text の横幅（ピクセル単位）を返す
+	public double getFontWidth(Font font, String text) {
+		AttributedString attributedString = new AttributedString(text);
+		attributedString.addAttribute(TextAttribute.FAMILY, font.getFontName(), 0, text.length());
+		attributedString.addAttribute(TextAttribute.SIZE, (float)font.getFontHeightInPoints());
+		if (font.getBold()) {
+		    attributedString.addAttribute(TextAttribute.WEIGHT, TextAttribute.WEIGHT_BOLD, 0, text.length());
+		}
+		if (font.getItalic()) {
+		    attributedString.addAttribute(TextAttribute.POSTURE, TextAttribute.POSTURE_OBLIQUE, 0, text.length());
+		}
+		FontRenderContext fontRenderContext = new FontRenderContext(null, true, true);
+		TextLayout layout = new TextLayout(attributedString.getIterator(), fontRenderContext);
+		Rectangle2D bounds = layout.getBounds();
+		double width = bounds.getX() + bounds.getWidth();
+		___console_Out___("width = " + width);
+		return width;
+	}
+
+	/** コンソールに String を出力 */
 	public static void ___console_Out___(String message) {
 		System.out.println("");
 		System.out.println(message);
