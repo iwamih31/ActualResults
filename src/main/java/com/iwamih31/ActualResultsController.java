@@ -144,8 +144,8 @@ public class ActualResultsController {
 
 	@PostMapping("/User/Output/Excel")
 	public String user_Output_Excel(
-			@Param("user_id")int user_id,
-			@Param("year_month")String year_month,
+			@RequestParam("user_id")int user_id,
+			@RequestParam("year_month")String year_month,
 			HttpServletResponse httpServletResponse,
 			RedirectAttributes redirectAttributes) {
 		service.__consoleOut__("@PostMapping(\"/User/Output/Excel\")開始");
@@ -157,12 +157,24 @@ public class ActualResultsController {
 
 	@PostMapping("/Plan/Output/Excel")
 	public String plan_Output_Excel(
-			@Param("user_id")int user_id,
-			@Param("year_month")String year_month,
+			@RequestParam("user_id")int user_id,
+			@RequestParam("year_month")String year_month,
 			HttpServletResponse httpServletResponse,
 			RedirectAttributes redirectAttributes) {
 		service.__consoleOut__("@PostMapping(\"/Plan/Output/Excel\")開始");
 		String message = service.plan_Output_Excel(user_id, year_month, httpServletResponse);
+		redirectAttributes.addFlashAttribute("message", message);
+		service.__consoleOut__("@PostMapping(\"/Plan/Output/Excel\")終了");
+		return "redirect:/CareRecord/OfficeReport";
+	}
+
+	@PostMapping("/ActualResults/Output/Excel")
+	public String actualResults_Output_Excel(
+			@RequestParam("year_month")String year_month,
+			HttpServletResponse httpServletResponse,
+			RedirectAttributes redirectAttributes) {
+		service.__consoleOut__("@PostMapping(\"/Plan/Output/Excel\")開始");
+		String message = service.actualResults_Output_Excel(year_month, httpServletResponse);
 		redirectAttributes.addFlashAttribute("message", message);
 		service.__consoleOut__("@PostMapping(\"/Plan/Output/Excel\")終了");
 		return "redirect:/CareRecord/OfficeReport";
@@ -467,41 +479,52 @@ public class ActualResultsController {
 		return "redirect:" + req() + "/Plan?user_id=" + user_id + "&year_month=" + year_month;
 	}
 
-			@PostMapping("/Plan/YearMonth")
-			public String plan_YearMonth(
-					@RequestParam("user_id")int user_id,
-					@RequestParam("year_month")String year_month,
-					Model model) {
-				service.__consoleOut__("@GetMapping(\"/RoutineDate\")開始 ");
-				add_View_Data_(model, "yearMonth", "日付変更");
-				model.addAttribute("user_id", user_id);
-				model.addAttribute("year_month", year_month);
-				model.addAttribute("url", "/Plan");
-				model.addAttribute("user", service.user(user_id));
-				model.addAttribute("year", service.year(year_month));
-				model.addAttribute("month_day", service.month_day(year_month));
-				model.addAttribute("options", service.options());
-				service.__consoleOut__("@GetMapping(\"/RoutineDate\")終了");
-				return "view";
-			}
+	@PostMapping("/Plan/YearMonth")
+	public String plan_YearMonth(
+			@RequestParam("user_id")int user_id,
+			@RequestParam("year_month")String year_month,
+			Model model) {
+		service.__consoleOut__("@PostMapping(\"/Plan/YearMonth\")開始 ");
+		add_View_Data_(model, "yearMonth", "日付変更");
+		model.addAttribute("user_id", user_id);
+		model.addAttribute("year_month", year_month);
+		model.addAttribute("url", "/Plan");
+		model.addAttribute("user", service.user(user_id));
+		model.addAttribute("year", service.year(year_month));
+		model.addAttribute("month_day", service.month_day(year_month));
+		model.addAttribute("options", service.options());
+		service.__consoleOut__("@PostMapping(\"/Plan/YearMonth\")終了");
+		return "view";
+	}
 
-			@PostMapping("/User/YearMonth")
-			public String user_YearMonth(
-					@RequestParam("user_id")int user_id,
-					@RequestParam("year_month")String year_month,
-					Model model) {
-				service.__consoleOut__("@GetMapping(\"/RoutineDate\")開始 ");
-				add_View_Data_(model, "yearMonth", "日付変更");
-				model.addAttribute("user_id", user_id);
-				model.addAttribute("year_month", year_month);
-				model.addAttribute("url", "/User");
-				model.addAttribute("user", service.user(user_id));
-				model.addAttribute("year", service.year(year_month));
-				model.addAttribute("month_day", service.month_day(year_month));
-				model.addAttribute("options", service.options());
-				service.__consoleOut__("@GetMapping(\"/RoutineDate\")終了");
-				return "view";
-			}
+	@PostMapping("/User/YearMonth")
+	public String user_YearMonth(
+			@RequestParam("user_id")int user_id,
+			@RequestParam("year_month")String year_month,
+			Model model) {
+		service.__consoleOut__("@PostMapping(\"/User/YearMonth\")開始 ");
+		add_View_Data_(model, "yearMonth", "日付変更");
+		model.addAttribute("user_id", user_id);
+		model.addAttribute("year_month", year_month);
+		model.addAttribute("url", "/User");
+		model.addAttribute("user", service.user(user_id));
+		model.addAttribute("year", service.year(year_month));
+		model.addAttribute("month_day", service.month_day(year_month));
+		model.addAttribute("options", service.options());
+		service.__consoleOut__("@PostMapping(\"/User/YearMonth\")終了");
+		return "view";
+	}
+
+	@GetMapping("/ActualResults")
+	public String actualResults(
+			Model model) {
+		service.__consoleOut__("@GetMapping(\"/ActualResults\")開始 ");
+		add_View_Data_(model, "actualResults", "実施記録票（全利用者分）出力");
+		model.addAttribute("year_month", service.this_Year_Month());
+		model.addAttribute("options", service.options());
+		service.__consoleOut__("@GetMapping(\"/ActualResults\")終了");
+		return "view";
+	}
 
 	@PostMapping("/Birthday")
 	public String birthday(

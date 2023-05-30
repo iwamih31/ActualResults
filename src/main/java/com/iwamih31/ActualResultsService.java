@@ -278,7 +278,7 @@ public class ActualResultsService {
 		return message;
 	}
 
-	/** 実績記入表（個人）をExcelファイルとして出力 */
+	/** 実施記録票（個人）をExcelファイルとして出力 */
 	public String user_Output_Excel(int user_id, String year_month, HttpServletResponse response) {
 		__consoleOut__("user_Output_Excel(int user_id, String year_month, HttpServletResponse response) 開始");
 		Excel excel = new Excel();
@@ -293,7 +293,7 @@ public class ActualResultsService {
 		return message;
 	}
 
-	/** 実績記入表（全利用者分）をExcelファイルとして出力 */
+	/** 実施記録票（全利用者分）をExcelファイルとして出力 */
 	public String actualResults_Output_Excel(String year_month, HttpServletResponse response) {
 		__consoleOut__("office_Output_Excel(HttpServletResponse response) 開始");
 		Excel excel = new Excel();

@@ -8,10 +8,19 @@
 
 	<!--	main フラグメントの定義（メインコンテンツ）	-->
 	<div th:fragment="main">
+		<!--	ページタイトル	-->
 		<div class="header border-bottom">
 			<h1 class="h2">[[${title}]]</h1>
 		</div>
-		<!--	一覧表示	-->
+		<!--	操作系	-->
+		<div class="flex margin_1em">
+			<form id="output" method="post" th:action="@{${req} + '/Office/Output/Excel'}">
+				<button form="output" type="submit" class="btn btn-primary margin_1em">
+					Excelに出力
+				</button>
+			</form>
+		</div>
+		<!--	一覧表示開始	-->
 		<div>
 			<table class="detail font-size-x-large	center">
 				<th:block th:each="data : ${office_data}" th:object="${data}">
@@ -26,6 +35,7 @@
 				</th:block>
 			</table>
 		</div>
+		<!--	一覧表示終了	-->
 		<br>
 		<a th:href="@{/main}">メインページへ</a>
 	</div>
