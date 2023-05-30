@@ -48,6 +48,10 @@ public class ActualResultsService {
 		return planRepository.getReferenceById(id);
 	}
 
+	public boolean exists_Plan(int id) {
+		return planRepository.existsById(id);
+	}
+
 	public Office office(int id) {
 		return officeRepository.getReferenceById(id);
 	}

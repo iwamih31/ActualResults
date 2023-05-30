@@ -342,6 +342,9 @@ public class ActualResultsController {
 			@RequestParam("year_month")String year_month
 			) {
 		service.__consoleOut__("@PostMapping(\"/PlanUpdate\")開始");
+		if (service.exists_Plan(id) == false ) {
+			return "redirect:" + req() + "/Plan?user_id=" + user_id + "&year_month=" + year_month;
+		}
 		service.__consoleOut__("@PostMapping(\"/PlanUpdate\")終了");
 		return "redirect:" + req() + "/PlanUpdate?id=" + id + "&user_id=" + user_id + "&year_month=" + year_month;
 	}

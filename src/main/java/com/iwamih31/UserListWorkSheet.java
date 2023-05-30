@@ -9,10 +9,11 @@ import org.apache.poi.ss.usermodel.IndexedColors;
 
 public class UserListWorkSheet extends WorkSheet{
 
+	// コンストラクター
 	public UserListWorkSheet() {
+	// 印刷向きを横にする
 		this.printSetup = true;
 	}
-	// コンストラクター
 	public UserListWorkSheet(String sheet_Name, int[] column_Width, String[][] value_Data) {
 		this.sheet_Name = sheet_Name;
 		this.column_Width = column_Width;
@@ -55,8 +56,9 @@ public class UserListWorkSheet extends WorkSheet{
 		return fonts;
 	};
 
-	/** 行毎の書式 */
+	/** 行毎の書式設定用 Map リスト */
 	public List<Map<String, String[]>> row_Format(int row_Size){
+		// 行毎の書式設定用データ配列格納用 Map リスト
 		List<Map<String, String[]>> row_Format = new ArrayList<>();
 		for (int i = 0; i < row_Size; i++) {
 			// default の値

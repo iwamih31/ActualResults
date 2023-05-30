@@ -7,10 +7,17 @@ import java.util.Map;
 
 public class PlanWorkSheet extends WorkSheet{
 
+	// コンストラクター
+	public PlanWorkSheet() {
+	// 印刷向きを横にする
+		this.printSetup = true;
+	}
 	public PlanWorkSheet(String sheet_Name, int[] column_Width, String[][] value_Data) {
 		this.sheet_Name = sheet_Name;
 		this.column_Width = column_Width;
 		this.value_Data = value_Data;
+		// 印刷向きを横にする
+		this.printSetup = true;
 	}
 
 	// 罫線（"□","￣","＿"," |","| ","二","冂","凵","匚","コ","ノ","乚","ｒ","¬"）
