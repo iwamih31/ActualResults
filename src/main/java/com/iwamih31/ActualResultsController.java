@@ -128,7 +128,7 @@ public class ActualResultsController {
 		String message = service.office_Output_Excel(httpServletResponse);
 		redirectAttributes.addFlashAttribute("message", message);
 		service.__consoleOut__("@PostMapping(\"/Office/Output/Excel\")終了");
-		return "redirect:/CareRecord/OfficeReport";
+		return "redirect:" + req() + "/CareRecord/OfficeReport";
 	}
 
 	@PostMapping("/UserList/Output/Excel")
@@ -139,7 +139,7 @@ public class ActualResultsController {
 		String message = service.userList_Output_Excel(httpServletResponse);
 		redirectAttributes.addFlashAttribute("message", message);
 		service.__consoleOut__("@PostMapping(\"/UserList/Output/Excel\")終了");
-		return "redirect:/CareRecord/OfficeReport";
+		return "redirect:" + req() + "/CareRecord/OfficeReport";
 	}
 
 	@PostMapping("/User/Output/Excel")
@@ -152,7 +152,7 @@ public class ActualResultsController {
 		String message = service.user_Output_Excel(user_id, year_month, httpServletResponse);
 		redirectAttributes.addFlashAttribute("message", message);
 		service.__consoleOut__("@PostMapping(\"/User/Output/Excel\")終了");
-		return "redirect:/CareRecord/OfficeReport";
+		return "redirect:" + req() + "/CareRecord/OfficeReport";
 	}
 
 	@PostMapping("/Plan/Output/Excel")
@@ -165,7 +165,7 @@ public class ActualResultsController {
 		String message = service.plan_Output_Excel(user_id, year_month, httpServletResponse);
 		redirectAttributes.addFlashAttribute("message", message);
 		service.__consoleOut__("@PostMapping(\"/Plan/Output/Excel\")終了");
-		return "redirect:/CareRecord/OfficeReport";
+		return "redirect:" + req() + "/CareRecord/OfficeReport";
 	}
 
 	@PostMapping("/ActualResults/Output/Excel")
@@ -177,7 +177,7 @@ public class ActualResultsController {
 		String message = service.actualResults_Output_Excel(year_month, httpServletResponse);
 		redirectAttributes.addFlashAttribute("message", message);
 		service.__consoleOut__("@PostMapping(\"/Plan/Output/Excel\")終了");
-		return "redirect:/CareRecord/OfficeReport";
+		return "redirect:" + req() + "/CareRecord/OfficeReport";
 	}
 
 	@GetMapping("/UserList")

@@ -650,7 +650,7 @@ public class ActualResultsService {
 		List<LocalDate> year_month_dates = new ArrayList<>();
 		Integer[] split_Date = split_Date(date);
 		int year = split_Date[0];
-		int month = split_Date[１];
+		int month = split_Date[1];
 		LocalDate localDate = to_LocalDate(year, month, 1);
 		Month date_Month = localDate.getMonth();
 		while (true) {
@@ -692,7 +692,7 @@ public class ActualResultsService {
 			date = date.replace("/", "-");
 			String[] array = date.split("-");
 			if(array.length > 0 && is_Int(array[0])) year = Integer.parseInt(array[0]);
-			if(array.length > 1) month = Integer.parseInt(array[１]);
+			if(array.length > 1) month = Integer.parseInt(array[1]);
 			if(array.length > 2) day = Integer.parseInt(array[2]);
 			split_Date = new Integer[] {year, month, day};
 		}
