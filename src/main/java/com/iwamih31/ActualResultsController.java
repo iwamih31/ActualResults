@@ -508,8 +508,6 @@ public class ActualResultsController {
 		model.addAttribute("year_month", year_month);
 		model.addAttribute("url", "/User");
 		model.addAttribute("user", service.user(user_id));
-		model.addAttribute("year", service.year(year_month));
-		model.addAttribute("month_day", service.month_day(year_month));
 		model.addAttribute("options", service.options());
 		service.__consoleOut__("@PostMapping(\"/User/YearMonth\")終了");
 		return "view";

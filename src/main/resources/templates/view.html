@@ -21,7 +21,7 @@
 			<a th:href="@{${req} + '/UserList'}">
 				<img src="/image/logo.png" title="ロゴ" class="padding_s">
 			</a>
-			<nav class="padding_s">
+			<nav class="padding_s flex">
 				<a th:href="@{${req} + '/UserList'}">
 					<button type="button" class="btn btn-primary">利用者一覧</button>
 				</a>
@@ -34,6 +34,9 @@
 				<a th:href="@{${req} + '/Setting'}">
 					<button type="button" class="btn btn-primary">設定</button>
 				</a>
+				<form method="post" action="/shutdown">
+					<button type="submit" class="btn btn-primary bg_green">終了する</button>
+				</form>
 			</nav>
 		</div>
 		<hr>

@@ -26,13 +26,13 @@ public class ActualResultsService {
 	@Autowired
 	private PlanRepository planRepository;
 
-
 	public List<User> user_All() {
 		return userRepository.findAll();
 	}
 
 	public List<Office> office_All() {
-		if (next_Office_Id() == 1) set_Office();
+		if (next_Office_Id() == 1)
+			set_Office();
 		return officeRepository.findAll();
 	}
 
@@ -105,7 +105,7 @@ public class ActualResultsService {
 	}
 
 	public String[] office_Item_Names() {
-		String[] item_Names =  {"事業所名","部署名"};
+		String[] item_Names = { "事業所名", "部署名" };
 		return item_Names;
 	}
 
@@ -142,7 +142,7 @@ public class ActualResultsService {
 	}
 
 	public String plan_Update(Plan plan, String[] day_of_weeks) {
-		__consoleOut__("event_Update開始 " +  plan);
+		__consoleOut__("event_Update開始 " + plan);
 		String message = "ID = " + plan.getId() + " の訪問計画";
 		try {
 			plan.setDay_of_week(plan_day_of_week(day_of_weeks));
@@ -171,10 +171,10 @@ public class ActualResultsService {
 		LocalDate plan_last_date = null;
 		List<Plan> after_Plan_List = planRepository.after_Plan_List(user_id, localDate);
 		// 指定月以降にプランがある場合
-		if(after_Plan_List.size() > 0) {
-		// plan_last_date は次のプランの開始月の前の月
+		if (after_Plan_List.size() > 0) {
+			// plan_last_date は次のプランの開始月の前の月
 			plan_last_date = after_Plan_List.get(0).getStart_date().minusMonths(1);
-		// 指定月以降にプランが無い場合
+			// 指定月以降にプランが無い場合
 		} else {
 			// plan_last_date は開始月の1年後
 			plan_last_date = LocalDate.now().plusYears(1);
@@ -186,7 +186,7 @@ public class ActualResultsService {
 		LocalDate plan_Start_date = localDate;
 		List<Plan> before_Plan_List = planRepository.before_Plan_List(user_id, localDate);
 		// 指定月以前にプランがある場合のみ
-		if(before_Plan_List.size() > 0) {
+		if (before_Plan_List.size() > 0) {
 			// 直前のプランの終了月を全て localDate.minusMonths(1) に書き換え
 			LocalDate previous_Plan_Start = before_Plan_List.get(0).getStart_date();
 			List<Plan> plan_List = planRepository.get_plan_List(user_id, previous_Plan_Start);
@@ -223,7 +223,7 @@ public class ActualResultsService {
 				return 10;
 			case "生活５":
 				return 10;
-			default	:
+			default:
 				return 0;
 		}
 	}
@@ -243,7 +243,7 @@ public class ActualResultsService {
 					String.valueOf(office.getId()),
 					String.valueOf(office.getItem_name()),
 					String.valueOf(office.getItem_value())
-				};
+			};
 		}
 		message = excel.output_Excel("事業所", column_Names, column_Width, table_Data, response);
 		__consoleOut__("office_Output_Excel(HttpServletResponse response) 終了");
@@ -271,7 +271,8 @@ public class ActualResultsService {
 		int[] column_Width = Set.get_Value_Set(LabelSet.plan_Set);
 		String[][] output_Data = to_Array(plan_To_Visit_Sheet(user_id, year_month));
 		String sheet_Name = user(user_id).getName();
-		if(sheet_Name == null || sheet_Name == "") sheet_Name = "訪問予定計画表（個人）";
+		if (sheet_Name == null || sheet_Name == "")
+			sheet_Name = "訪問予定計画表（個人）";
 		WorkSheet workSheet = new PlanWorkSheet(sheet_Name, column_Width, output_Data);
 		message = excel.output_Excel_Sheet("訪問予定計画表（個人）", workSheet, response);
 		__consoleOut__("plan_Output_Excel(int user_id, String year_month, HttpServletResponse response) 終了");
@@ -286,7 +287,8 @@ public class ActualResultsService {
 		int[] column_Width = Set.get_Value_Set(LabelSet.actualResults_Set);
 		String[][] output_Data = to_Array(actualResults_Sheet(user_id, year_month));
 		String sheet_Name = user(user_id).getName();
-		if(sheet_Name == null || sheet_Name == "") sheet_Name = "実績記入表（個人）";
+		if (sheet_Name == null || sheet_Name == "")
+			sheet_Name = "実績記入表（個人）";
 		WorkSheet workSheet = new ActualResultsWorkSheet(sheet_Name, column_Width, output_Data);
 		message = excel.output_Excel_Sheet("実績記入表（個人）", workSheet, response);
 		__consoleOut__("user_Output_Excel(int user_id, String year_month, HttpServletResponse response) 終了");
@@ -375,7 +377,8 @@ public class ActualResultsService {
 		List<String[]> head_Row_Values = new ArrayList<>();
 		for (int i = 0; i < head_Rows.length; i++) {
 			// i が奇数（valueの配列）の時だけ処理を行う
-			if (i % 2 != 0) head_Row_Values.add(head_Rows[i]);
+			if (i % 2 != 0)
+				head_Row_Values.add(head_Rows[i]);
 		}
 		return head_Row_Values;
 	}
@@ -403,13 +406,13 @@ public class ActualResultsService {
 			// 期間内の同じ曜日のプランを List<Plan> として取得
 			List<Plan> plan_List = get_Plan_List(user_id, to_LocalDate(year_month), day_of_week);
 			// 該当プランがあれば
-			if(plan_List.size() > 0) {
+			if (plan_List.size() > 0) {
 				// プラン数分ループ
 				for (Plan plan : plan_List) {
 					// プランに応じた行を作成
 					data_Row_Values.add(actualResults_Row(localDate, plan));
 				}
-			// プランが無ければ
+				// プランが無ければ
 			} else {
 				// プラン無しの行を作成
 				data_Row_Values.add(actualResults_Row(localDate, null));
@@ -425,7 +428,7 @@ public class ActualResultsService {
 		// 期間内のプランを取得
 		List<Plan> plan_List = plan_List(user_id, to_LocalDate(year_month));
 		// 該当プランがあれば
-		if(plan_List.size() > 0) {
+		if (plan_List.size() > 0) {
 			// プラン数分ループ
 			for (Plan plan : plan_List) {
 				// プランに応じた行を作成
@@ -446,7 +449,7 @@ public class ActualResultsService {
 		// ユーザ一覧を取得
 		List<User> user_List = user_All();
 		// 該当プランがあれば
-		if(user_List.size() > 0) {
+		if (user_List.size() > 0) {
 			// プラン数分ループ
 			for (User user : user_List) {
 				// プランに応じた行を作成
@@ -466,22 +469,22 @@ public class ActualResultsService {
 
 	private String[][] head_Rows(int user_id, String year_month) {
 		__consoleOut__("private String[][] head_Rows(int user_id, String year_month)開始");
-  	User user = user(user_id);
-  	Integer[] split_Date = split_Date(year_month);
-  	String y_m_ = split_Date[0] + " 年　　" + split_Date[1] + " 月";
-  	String fase = "　氏名　";
-  	String name = user.getRoom() +  "　" + user.getName() + "　様";
+		User user = user(user_id);
+		Integer[] split_Date = split_Date(year_month);
+		String y_m_ = split_Date[0] + " 年　　" + split_Date[1] + " 月";
+		String fase = "　氏名　";
+		String name = user.getRoom() + "　" + user.getName() + "　様";
 		String form = "訪問介護サービス提供実施記録票";
 		String com_ = office_item_value("事業所名");
 		// String[偶数][] = セルの罫線, String[奇数][] = セルの値
-  	String[][] head_Rows = {
-  			{"  ","  ","  ","  ","  ","  ","  ","  "},
-  			{""  ,y_m_,""  ,""  ,form,""  ,""  ,""  },
-  			{"匚","二","二","コ","匚","二","二","コ"},
-  			{fase,name,""  ,""  ,""  ,com_,""  ,""  },
-  			{"  ","  ","  ","  ","  ","  ","  ","  "},
-  			{""  ,""  ,""  ,""  ,""  ,""  ,""  ,""  }
-  	};
+		String[][] head_Rows = {
+				{ "  ", "  ", "  ", "  ", "  ", "  ", "  ", "  " },
+				{ "", y_m_, "", "", form, "", "", "" },
+				{ "匚", "二", "二", "コ", "匚", "二", "二", "コ" },
+				{ fase, name, "", "", "", com_, "", "" },
+				{ "  ", "  ", "  ", "  ", "  ", "  ", "  ", "  " },
+				{ "", "", "", "", "", "", "", "" }
+		};
 		__consoleOut__("private String[][] head_Rows(int user_id, String year_month)終了");
 		__consoleOut__("String[][] head_Rows = " + head_Rows);
 		return head_Rows;
@@ -494,12 +497,12 @@ public class ActualResultsService {
 		String depa = office_item_value("部署名");
 		// String[偶数][] = セルの罫線, String[奇数][] = セルの値
 		String[][] head_Rows = {
-				{"  ","  ","  ","  ","  ","  ","  ","  "},
-				{""  ,""  ,""  ,""  ,form,""  ,""  ,""  },
-				{"匚","二","二","コ","匚","二","二","コ"},
-				{""  ,com_,""  ,""  ,""  ,depa,""  ,""  },
-				{"  ","  ","  ","  ","  ","  ","  ","  "},
-				{""  ,""  ,""  ,""  ,""  ,""  ,""  ,""  }
+				{ "  ", "  ", "  ", "  ", "  ", "  ", "  ", "  " },
+				{ "", "", "", "", form, "", "", "" },
+				{ "匚", "二", "二", "コ", "匚", "二", "二", "コ" },
+				{ "", com_, "", "", "", depa, "", "" },
+				{ "  ", "  ", "  ", "  ", "  ", "  ", "  ", "  " },
+				{ "", "", "", "", "", "", "", "" }
 		};
 		__consoleOut__("private String[][] head_Rows(int user_id, String year_month)終了");
 		__consoleOut__("String[][] head_Rows = " + head_Rows);
@@ -509,13 +512,14 @@ public class ActualResultsService {
 	private String office_item_value(String item_name) {
 		String value = "";
 		List<String> item_value = officeRepository.item_value(item_name);
-		if (item_value.size() > 0) value = officeRepository.item_value(item_name).get(0);
+		if (item_value.size() > 0)
+			value = officeRepository.item_value(item_name).get(0);
 		return value;
 	}
 
 	private String[] actualResults_Row(LocalDate localDate, Plan plan) {
-  	String[] row = new String[] {
-  			make_String(month_day_JP(localDate)),
+		String[] row = new String[] {
+				make_String(month_day_JP(localDate)),
 				make_String(day_of_week(localDate)),
 				make_String(plan_Subject(plan)),
 				make_String(plan_Time(plan)),
@@ -523,7 +527,7 @@ public class ActualResultsService {
 				"",
 				"",
 				""
-			};
+		};
 		return row;
 	}
 
@@ -534,7 +538,7 @@ public class ActualResultsService {
 				make_String(plan_Start_time(plan)),
 				make_String(plan_Minutes(plan)),
 				make_String(plan_Items(plan)),
-				make_String(plan_Note(plan))};
+				make_String(plan_Note(plan)) };
 		return row;
 	}
 
@@ -547,55 +551,62 @@ public class ActualResultsService {
 				make_String(user.getLevel()),
 				make_String(user.getMove_in()),
 				make_String(user.getUse()),
-				make_String(user.getNote())};
+				make_String(user.getNote()) };
 		return row;
 	}
 
 	private String plan_Day_of_week(Plan plan) {
 		String field_Value = "";
-		if (plan != null) field_Value = plan.getDay_of_week();
+		if (plan != null)
+			field_Value = plan.getDay_of_week();
 		return field_Value;
 	}
 
 	private String plan_Subject(Plan plan) {
 		String field_Value = "";
-		if(plan != null) field_Value = plan.getSubject();
+		if (plan != null)
+			field_Value = plan.getSubject();
 		return field_Value;
 	}
 
 	private String plan_Start_time(Plan plan) {
 		String field_Value = "";
-		if (plan != null) field_Value = plan.getStart_time();
+		if (plan != null)
+			field_Value = plan.getStart_time();
 		return field_Value;
 	}
 
 	private Integer plan_Minutes(Plan plan) {
 		Integer field_Value = 0;
-		if (plan != null) field_Value = plan.getMinutes();
+		if (plan != null)
+			field_Value = plan.getMinutes();
 		return field_Value;
 	}
 
 	private String plan_Items(Plan plan) {
-  	String field_Value = "";
-  	if (plan != null) field_Value = plan.getItems();
+		String field_Value = "";
+		if (plan != null)
+			field_Value = plan.getItems();
 		return field_Value;
 	}
 
 	private String plan_Note(Plan plan) {
 		String field_Value = "";
-		if (plan != null) field_Value = plan.getNote();
+		if (plan != null)
+			field_Value = plan.getNote();
 		return field_Value;
 	}
 
 	private String make_String(Object object) {
 		String make_String = "";
-		if (object != null) make_String = String.valueOf(object);
+		if (object != null)
+			make_String = String.valueOf(object);
 		return make_String;
 	}
 
 	private String plan_Time(Plan plan) {
 		String plan_Time = "";
-		if(plan != null) {
+		if (plan != null) {
 			String start_time = plan.getStart_time();
 			Integer minutes = plan.getMinutes();
 			if (minutes > 0) {
@@ -614,7 +625,7 @@ public class ActualResultsService {
 	}
 
 	/** start から end まで add ずつ増やした数を代入した配列を作成 */
-  public static Integer[] nums(int start, int end, int add) {
+	public static Integer[] nums(int start, int end, int add) {
 		Integer[] nums = new Integer[(end - start) / add + 1];
 		for (int i = 0; i < nums.length; i++) {
 			nums[i] = i * add + start;
@@ -624,7 +635,7 @@ public class ActualResultsService {
 
 	public static String[] days(String month) {
 		int lastDay = 31;
-		switch(month) {
+		switch (month) {
 			case "2":
 				lastDay = 29;
 				break;
@@ -656,7 +667,7 @@ public class ActualResultsService {
 		while (true) {
 			year_month_dates.add(localDate);
 			localDate = localDate.plusDays(1);
-			if(localDate.getMonth() != date_Month ) {
+			if (localDate.getMonth() != date_Month) {
 				__consoleOut__("Last date = " + localDate.toString());
 				break;
 			}
@@ -691,10 +702,13 @@ public class ActualResultsService {
 			date = date.split("T")[0];
 			date = date.replace("/", "-");
 			String[] array = date.split("-");
-			if(array.length > 0 && is_Int(array[0])) year = Integer.parseInt(array[0]);
-			if(array.length > 1) month = Integer.parseInt(array[1]);
-			if(array.length > 2) day = Integer.parseInt(array[2]);
-			split_Date = new Integer[] {year, month, day};
+			if (array.length > 0 && is_Int(array[0]))
+				year = Integer.parseInt(array[0]);
+			if (array.length > 1)
+				month = Integer.parseInt(array[1]);
+			if (array.length > 2)
+				day = Integer.parseInt(array[2]);
+			split_Date = new Integer[] { year, month, day };
 		}
 		return split_Date;
 	}
@@ -713,18 +727,18 @@ public class ActualResultsService {
 	}
 
 	private LocalDateTime to_LocalDateTime(String date) {
-			Integer[] split_Date = split_Date(date);
-			int year = split_Date[0];
-			int month = split_Date[1];
-			int day = split_Date[2];
+		Integer[] split_Date = split_Date(date);
+		int year = split_Date[0];
+		int month = split_Date[1];
+		int day = split_Date[2];
 		return to_LocalDateTime(year, month, day);
 	}
 
 	private LocalDate to_LocalDate(String date) {
-			Integer[] split_Date = split_Date(date);
-			int year = split_Date[0];
-			int month = split_Date[1];
-			int day = split_Date[2];
+		Integer[] split_Date = split_Date(date);
+		int year = split_Date[0];
+		int month = split_Date[1];
+		int day = split_Date[2];
 		return to_LocalDate(year, month, day);
 	}
 
@@ -740,7 +754,7 @@ public class ActualResultsService {
 	}
 
 	private LocalDateTime to_LocalDateTime(int year, int month, int day) {
-		 LocalDate localDate = LocalDate.of(year, month, day);
+		LocalDate localDate = LocalDate.of(year, month, day);
 		LocalDateTime localDateTime = LocalDateTime.now().with(localDate);
 		return localDateTime;
 	}
@@ -754,7 +768,6 @@ public class ActualResultsService {
 	public List<Plan> plan_List(int user_id, LocalDate localDate) {
 		return planRepository.plan_List(user_id, localDate);
 	}
-
 
 	public List<Plan> plan_List(int user_id, String year_month) {
 		return planRepository.plan_List(user_id, to_LocalDate(year_month));
@@ -794,7 +807,7 @@ public class ActualResultsService {
 
 	public String last_Year_Month() {
 		// 今日の日付を取得
-			LocalDateTime now = LocalDateTime.now();
+		LocalDateTime now = LocalDateTime.now();
 		// 1つ前の月に変換
 		LocalDateTime last_Month_Now = now.minusMonths(1);
 		// 表示形式を指定
@@ -837,7 +850,7 @@ public class ActualResultsService {
 		String time = time();
 		// 末尾を 0 または 5 に変換して time に代入
 		// time の1の位を取得
-		String minutesLast = time.substring(time.length()-1, time.length());
+		String minutesLast = time.substring(time.length() - 1, time.length());
 		// 0 にするか 5 にするか判定
 		if (Integer.parseInt(minutesLast) < 5) {
 			minutesLast = "0";
@@ -845,14 +858,14 @@ public class ActualResultsService {
 			minutesLast = "5";
 		}
 		// 末尾を変換
-		time = time.substring(0, time.length()-1) + minutesLast;
+		time = time.substring(0, time.length() - 1) + minutesLast;
 		__consoleOut__("part_time = " + time);
 		return time;
 	}
 
 	public String[] dateOptions(int count, String input) {
 		String[] options = null;
-		switch(count) {
+		switch (count) {
 			case 1:
 				options = OptionData.years(today(), 1900, -1);
 				break;
@@ -868,22 +881,23 @@ public class ActualResultsService {
 
 	public String dateInputUrl(int count, int completion_count, String normal_Url, String completion_Url) {
 		String dateInputUrl = normal_Url;
-		if (count == completion_count) dateInputUrl = completion_Url;
+		if (count == completion_count)
+			dateInputUrl = completion_Url;
 		return dateInputUrl;
 	}
 
 	public String date_Input_Stage(int count) {
 		String stage = null;
-		switch(count) {
-		case 1:
-			stage = "年";
-			break;
-		case 2:
-			stage = "月";
-			break;
-		case 3:
-			stage = "日";
-			break;
+		switch (count) {
+			case 1:
+				stage = "年";
+				break;
+			case 2:
+				stage = "月";
+				break;
+			case 3:
+				stage = "日";
+				break;
 		}
 		return stage;
 	}
@@ -897,7 +911,7 @@ public class ActualResultsService {
 	public String dateStringConnect(int count, String string, String input) {
 		String delimiter = "/";
 		int word_count = 2;
-		switch(count) {
+		switch (count) {
 			case 1:
 				delimiter = "";
 				word_count = 0;
@@ -914,7 +928,7 @@ public class ActualResultsService {
 	}
 
 	/** 文字数が word_count になる様に object の前を fill で埋める */
-	public static String stringAlignment(Object object, int word_count , String fill) {
+	public static String stringAlignment(Object object, int word_count, String fill) {
 		// fill を word_count の数だけ繋げる
 		String fills = "";
 		for (int i = 0; i < word_count; i++) {
@@ -922,13 +936,13 @@ public class ActualResultsService {
 		}
 		// object の先頭に fills を付け 文字列変数 alignmentString に代入
 		String alignmentString = (fills + object);
-		//alignmentString の末尾から word_count の数だけ文字を抜き出し 自身に代入
+		// alignmentString の末尾から word_count の数だけ文字を抜き出し 自身に代入
 		alignmentString = alignmentString.substring(alignmentString.length() - word_count);
 		return alignmentString;
 	}
 
 	/** 配列の中身を同じ文字数に揃える */
-	public static String[] arrayAlignment(Object[] array, int word_count , String fill) {
+	public static String[] arrayAlignment(Object[] array, int word_count, String fill) {
 		// fill を word_count の数だけ繋げる
 		String fills = "";
 		for (int i = 0; i < word_count; i++) {
@@ -939,7 +953,7 @@ public class ActualResultsService {
 		for (int i = 0; i < alignmentArray.length; i++) {
 			// 先頭に fills を付ける
 			String string = (fills + array[i]);
-			//末尾から word_count の数だけ文字を抜き出し alignmentArray[i] に代入
+			// 末尾から word_count の数だけ文字を抜き出し alignmentArray[i] に代入
 			alignmentArray[i] = string.substring(string.length() - word_count);
 		}
 		return alignmentArray;
@@ -955,7 +969,7 @@ public class ActualResultsService {
 		user.setBirthday(to_LocalDate(birthday));
 
 		// save() 実行
-			userRepository.save(user);
+		userRepository.save(user);
 	}
 
 	public void move_in_Update(int id, String string, String input) {
@@ -981,9 +995,11 @@ public class ActualResultsService {
 		for (Integer roomNumber : roomNumbers) {
 			boolean isUse = false;
 			for (User user : userList) {
-				if(roomNumber == user.getRoom()) isUse = true;
+				if (roomNumber == user.getRoom())
+					isUse = true;
 			}
-			if (isUse == false) blankRooms.add(roomNumber);
+			if (isUse == false)
+				blankRooms.add(roomNumber);
 		}
 		return blankRooms;
 	}
@@ -991,7 +1007,8 @@ public class ActualResultsService {
 	public int next_User_Id() {
 		int nextId = 1;
 		User lastElement = getLastElement(userRepository.findAll());
-		if (lastElement != null) nextId = lastElement.getId() + 1;
+		if (lastElement != null)
+			nextId = lastElement.getId() + 1;
 		__consoleOut__("next_User_Id = " + nextId);
 		return nextId;
 	}
@@ -999,7 +1016,8 @@ public class ActualResultsService {
 	public int next_Office_Id() {
 		int nextId = 1;
 		Office lastElement = getLastElement(officeRepository.findAll());
-		if (lastElement != null) nextId = lastElement.getId() + 1;
+		if (lastElement != null)
+			nextId = lastElement.getId() + 1;
 		__consoleOut__("next_Office_Id = " + nextId);
 		return nextId;
 	}
@@ -1008,27 +1026,28 @@ public class ActualResultsService {
 		int nextId = 1;
 		List<Plan> plan_List = planRepository.desc_id_All();
 		__consoleOut__("plan_List = " + plan_List);
-		if (plan_List.size() > 0) nextId = plan_List.get(0).getId() + 1;
+		if (plan_List.size() > 0)
+			nextId = plan_List.get(0).getId() + 1;
 		__consoleOut__("next_Plan_Id = " + nextId);
 		return nextId;
 	}
 
 	public User new_User() {
-		return new User(next_User_Id(),0, "", null, "", null, "", "") ;
+		return new User(next_User_Id(), 0, "", null, "", null, "", "");
 	}
 
 	public Office new_Office() {
-		Office new_Office = new Office(next_Office_Id(),"","" );
-		if (new_Office.getId() == 1) set_Office();
-		return  new Office(next_Office_Id(),"","" );
+		Office new_Office = new Office(next_Office_Id(), "", "");
+		if (new_Office.getId() == 1)
+			set_Office();
+		return new Office(next_Office_Id(), "", "");
 	}
 
 	public Plan new_Plan(int user_id) {
-		Plan new_Plan = new Plan(0, user_id, null, null,"" ,"" ,"10:00", 0, "", "");
+		Plan new_Plan = new Plan(0, user_id, null, null, "", "", "10:00", 0, "", "");
 		__consoleOut__("new_Plan = " + new_Plan);
 		return new_Plan;
 	}
-
 
 	private void set_Office() {
 		String[] item_Names = office_Item_Names();
@@ -1037,7 +1056,7 @@ public class ActualResultsService {
 	}
 
 	/** List の最後の Element を返すジェネリックメソッド */
-	public <E> E getLastElement(List<E> list){
+	public <E> E getLastElement(List<E> list) {
 		__consoleOut__("public <E> E getLastElement(List<E> list)開始");
 		E lastElement = null;
 		if (list.size() > 0) {
@@ -1049,13 +1068,14 @@ public class ActualResultsService {
 	}
 
 	public Object date(String date) {
-		if (date == null) date = today();
+		if (date == null)
+			date = today();
 		return date;
 	}
 
-
 	public String slash_Date(LocalDate localDate) {
-		if (localDate == null) localDate = LocalDate.now();
+		if (localDate == null)
+			localDate = LocalDate.now();
 		DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy/MM/dd");
 		return dateTimeFormatter.format(localDate);
 	}
@@ -1068,8 +1088,8 @@ public class ActualResultsService {
 
 	private String with_Now(String head_String) {
 		String now = now().replaceAll("[^0-9]", ""); // 現在日時の数字以外を "" に変換
-//	String now = now().replaceAll("[^\\d]", "");  ←こちらでもOK
-		now = now.substring(0, now.length()-3); // 後ろから3文字を取り除く
+		// String now = now().replaceAll("[^\\d]", ""); ←こちらでもOK
+		now = now.substring(0, now.length() - 3); // 後ろから3文字を取り除く
 		return head_String + now;
 	}
 
@@ -1108,24 +1128,24 @@ public class ActualResultsService {
 	}
 
 	/** コンソールに『クラス名.メソッド名 開始』と出力 */
-  public void method_Start() {
-  	Class<?> callerClass = StackWalker.getInstance(StackWalker.Option.RETAIN_CLASS_REFERENCE)
-    .getCallerClass();
-  	Method enclosingMethod = callerClass.getEnclosingMethod();
-  	System.out.println("");
-  	System.out.println(callerClass.getName() + "." + enclosingMethod.getName() + " 開始");
-  	System.out.println("");
-  }
+	public void method_Start() {
+		Class<?> callerClass = StackWalker.getInstance(StackWalker.Option.RETAIN_CLASS_REFERENCE)
+				.getCallerClass();
+		Method enclosingMethod = callerClass.getEnclosingMethod();
+		System.out.println("");
+		System.out.println(callerClass.getName() + "." + enclosingMethod.getName() + " 開始");
+		System.out.println("");
+	}
 
 	/** コンソールに『クラス名.メソッド名 終了』と出力 */
-  public void method_End() {
-  	Class<?> callerClass = StackWalker.getInstance(StackWalker.Option.RETAIN_CLASS_REFERENCE)
-  			.getCallerClass();
-  	Method enclosingMethod = callerClass.getEnclosingMethod();
-  	System.out.println("");
-  	System.out.println(callerClass.getName() + "." + enclosingMethod.getName() + " 終了");
-  	System.out.println("");
-  }
+	public void method_End() {
+		Class<?> callerClass = StackWalker.getInstance(StackWalker.Option.RETAIN_CLASS_REFERENCE)
+				.getCallerClass();
+		Method enclosingMethod = callerClass.getEnclosingMethod();
+		System.out.println("");
+		System.out.println(callerClass.getName() + "." + enclosingMethod.getName() + " 終了");
+		System.out.println("");
+	}
 
 	public String plan_Delete(int id) {
 		__consoleOut__("plan_Delete(int id)開始");
