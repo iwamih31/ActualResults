@@ -50,7 +50,7 @@ public class OptionData {
   // 利用状況
   public static String[] use = {"利用中", "利用終了"};
 
-  // 利用状況
+  // 曜日
   public static String[] day_of_week = {"月", "火", "水", "木", "金", "土", "日"};
 
   // 年

@@ -142,18 +142,21 @@ nav button,
 	width: inherit;
 }
 
-.user,
-.date
- {
+.user {
 	display: inline-flex;
 	border: solid blue thin;
 	border-radius: 0.2em;
-	font-size: 1.5em;
 	padding: 0.2em;
 	margin: 0.2em;
+	font-size: 1.5em;
 }
 
 .date {
+	display: inline-flex;
+	border: solid blue thin;
+	border-radius: 0.2em;
+	padding: 0.2em;
+	margin: 0.2em;
 	font-size: 1.3em;
 }
 

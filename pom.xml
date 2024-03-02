@@ -74,7 +74,7 @@
 		    <groupId>org.aspectj</groupId>
 		    <artifactId>aspectjweaver</artifactId>
 		</dependency>
-				<!-- アクチュエーター -->
+		<!-- アクチュエーター -->
     <dependency>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-actuator</artifactId>
