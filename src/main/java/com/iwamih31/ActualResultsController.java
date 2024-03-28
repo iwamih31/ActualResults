@@ -255,13 +255,12 @@ public class ActualResultsController {
 	}
 
 	@PostMapping("/UserUpdate")
-		public String userUpdate(
-				@RequestParam("id")int id
-	) {
-			service.__consoleOut__("@PostMapping(\"/UserUpdate\")開始");
-			service.__consoleOut__("@PostMapping(\"/UserUpdate\")終了");
-			return "redirect:" + req() + "/UserUpdate?id=" + id;
-		}
+	public String userUpdate(
+			@RequestParam("id")int id) {
+		service.__consoleOut__("@PostMapping(\"/UserUpdate\")開始");
+		service.__consoleOut__("@PostMapping(\"/UserUpdate\")終了");
+		return "redirect:" + req() + "/UserUpdate?id=" + id;
+	}
 
 	@GetMapping("/UserUpdate")
 	public String userUpdate(
