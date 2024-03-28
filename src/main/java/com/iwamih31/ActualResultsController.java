@@ -101,7 +101,6 @@ public class ActualResultsController {
 		return "redirect:" + req() + "/OfficeSetting";
 	}
 
-
 	@PostMapping("/OfficeReport")
 	public String officeReport() {
 		service.__consoleOut__("@PostMapping(\"/OfficeReport\")開始");
