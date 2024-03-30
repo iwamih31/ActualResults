@@ -642,6 +642,4 @@ public class ActualResultsController {
   	System.out.println(callerClass.getName() + "." + enclosingMethod.getName() + " 終了");
   	System.out.println("");
   }
-
-
 }
