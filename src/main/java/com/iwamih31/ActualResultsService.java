@@ -967,7 +967,6 @@ public class ActualResultsService {
 		// birthday を書き換え
 		User user = userRepository.getReferenceById(id);
 		user.setBirthday(to_LocalDate(birthday));
-
 		// save() 実行
 		userRepository.save(user);
 	}
