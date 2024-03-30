@@ -1207,5 +1207,4 @@ public class ActualResultsService {
 		__consoleOut__("plan_Copy(int user_id, String year_month)終了");
 		return message;
 	}
-
 }
