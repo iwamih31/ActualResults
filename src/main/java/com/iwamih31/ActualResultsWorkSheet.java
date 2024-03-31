@@ -45,7 +45,7 @@ public class ActualResultsWorkSheet extends WorkSheet{
 		fonts.add(font0);
 		fonts.add(font1);
 		return fonts;
-	};
+	}
 
 	/** 行毎の書式 */
 	public List<Map<String, String[]>> row_Format(int row_Size){
