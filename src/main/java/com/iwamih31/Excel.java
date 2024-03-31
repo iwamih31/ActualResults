@@ -390,7 +390,6 @@ public class Excel {
 		return sheet;
 	}
 
-
 	private boolean response_Making(HttpServletResponse response, String file_Name) {
 		boolean is_Make = false;
 		String encodedFilename = with_Now("create") + ".xlsx";
