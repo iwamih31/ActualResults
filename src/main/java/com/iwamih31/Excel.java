@@ -373,7 +373,6 @@ public class Excel {
 	sheet.setAutobreaks(false);
 	}
 
-
 	/** シート分割（スクロール固定） */
 	@SuppressWarnings("unused")
 	private Sheet createSplitPane(
