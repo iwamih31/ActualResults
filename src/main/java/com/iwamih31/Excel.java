@@ -239,7 +239,6 @@ public class Excel {
 		return message;
 	}
 
-
 	/** Sheetを 作成 */
 	public Sheet sheet_Making(Workbook workbook, WorkSheet work_Sheet) {
 		___console_Out___("sheet_Making() 開始");
