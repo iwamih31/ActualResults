@@ -331,10 +331,8 @@ public class Excel {
 		}
 //		sheet.setColumnBreak(7); // 改ページ位置設定
 //		sheet.removeColumnBreak(4);
-
     PrintSetup printSetup = sheet.getPrintSetup();
     printSetup.setLandscape(work_Sheet.printSetup);
-
 		for (int rowBreak : sheet.getRowBreaks()) {
 	    sheet.removeRowBreak(rowBreak);
 	}
