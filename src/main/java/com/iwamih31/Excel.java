@@ -409,7 +409,6 @@ public class Excel {
 	/** Table データを Excel として出力 */
 	public String output_Excel(String name_Head, String[] column_Names, int[] column_Width, String[][] table_Data, HttpServletResponse response) {
 		___console_Out___("output_Excel() 開始");
-
 		String file_Name = with_Now(name_Head) + ".xlsx";
 		String sheet_Name = with_Now(name_Head);
 		String message = file_Name + " のダウンロード";
@@ -419,7 +418,6 @@ public class Excel {
 			// 使用するフォントを定義
 			Font font = workbook.createFont();
 			font.setFontName("游ゴシック");
-
 			// ヘッダー行
 			// セルスタイルを定義
 			CellStyle header_CellStyle = workbook.createCellStyle();
@@ -435,7 +433,6 @@ public class Excel {
 			header_CellStyle.setAlignment(HorizontalAlignment.CENTER);
 			// フォントをセット
 			header_CellStyle.setFont(font);
-
 			// column_Names 分ループ
 			Row row = sheet.createRow(0);
 			for (int i = 0; i < column_Names.length; i++) {
@@ -448,7 +445,6 @@ public class Excel {
 					sheet.setColumnWidth(i, 512 * column_Width[i] + 0);
 				}
 			}
-
 			// データ行
 			// セルスタイルを定義
 			CellStyle data_CellStyle = workbook.createCellStyle();
@@ -481,7 +477,6 @@ public class Excel {
 					}
 				}
 			}
-
 	    // ファイル名を指定して保存
 			String encodedFilename = URLEncoder.encode(file_Name, "UTF-8");
 			response.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
