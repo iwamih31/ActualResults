@@ -406,7 +406,6 @@ public class Excel {
 		return is_Make;
 	}
 
-
 	/** Table データを Excel として出力 */
 	public String output_Excel(String name_Head, String[] column_Names, int[] column_Width, String[][] table_Data, HttpServletResponse response) {
 		___console_Out___("output_Excel() 開始");
