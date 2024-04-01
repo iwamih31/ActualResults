@@ -499,7 +499,6 @@ public class Excel {
 		return output_Excel(name_Head, column_Names, null, table_Data, response);
 	}
 
-
 	/** ファイル取得 */
 	public File file(String file_Name) {
 		File file = null;
