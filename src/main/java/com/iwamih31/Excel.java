@@ -559,7 +559,6 @@ public class Excel {
 			System.out.println(e.getMessage());
 		}
 		return is_Safe;
-
 	}
 
 	/** Workbook 作成 */
