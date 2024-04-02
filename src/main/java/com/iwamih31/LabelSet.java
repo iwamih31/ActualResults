@@ -92,7 +92,6 @@ public class LabelSet {
 			set("備考",		  15)
 	};
 
-
 	public static Set set(String label_Name, int width) {
 		return new Set(label_Name, width);
 	}
