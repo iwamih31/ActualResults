@@ -125,7 +125,6 @@ public class UserListWorkSheet extends WorkSheet{
 		return column_Width;
 	}
 
-
 	public void setColumn_Width(int[] column_Width) {
 		this.column_Width = column_Width;
 	}
